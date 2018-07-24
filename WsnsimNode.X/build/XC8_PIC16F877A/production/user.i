@@ -1875,15 +1875,30 @@ void InitApp(void)
 
 
     TRISE = 0x2;
+    RE0 = 0;
 
 
 
-
+    T1CON = 0x00;
+    TMR1H = 0;
+    TMR1L = 0;
+    T1CON = 0x00;
 
 }
 
 
 
 void Trigger(){
+    RE0 = 1;
+    _delay((unsigned long)((10)*(_XTAL_FREQ/4000000.0)));
+    RE0 = 0;
+}
 
+int EchoDuration(){
+    int t = 0;
+    while(!RE1);
+    while(RE1){
+        t++;
+    }
+    return t;
 }

@@ -28,7 +28,10 @@ void InitApp(void)
     
     
     /* Initialize peripherals */
-
+    T1CON = 0x00;
+    TMR1H = 0x00;
+    TMR1L = 0x00;
+    T1CON = 0x00;
     /* Enable interrupts */
 }
 
@@ -43,8 +46,6 @@ void Trigger(){
 int EchoDuration(){
     int t = 0;
     while(!ECHO);
-    while(ECHO){
-        t++;
-    }
-    return 
+    TMR1ON = 1;
+    return t;
 }
