@@ -1853,11 +1853,11 @@ typedef uint16_t uintptr_t;
 # 1 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdbool.h" 1 3
 # 11 "./user.h" 2
 # 1 "./system.h" 1
-# 21 "./system.h"
-void ConfigureOscillator(void);
 # 12 "./user.h" 2
-# 24 "./user.h"
+# 31 "./user.h"
 void InitApp(void);
+
+volatile char flags;
 
 
 void Trigger();
@@ -1865,6 +1865,11 @@ int EchoDuration();
 __attribute__((inline)) double CalcDistance(int time);
 void MeasureHY();
 double distance_cm;
+
+
+void InitializationSeqDS();
+void Write1DS();
+void Write0DS();
 # 13 "user.c" 2
 
 
@@ -1908,6 +1913,8 @@ int EchoDuration(){
     d = TMR1H;
     d <<= 8;
     d += TMR1L;
+    TMR1H = 0x00;
+    TMR1L = 0x00;
     return d;
 }
 
@@ -1921,6 +1928,4 @@ void MeasureHY(){
     Trigger();
     i = EchoDuration();
     distance_cm = CalcDistance(i);
-    TMR1H = 0x00;
-    TMR1L = 0x00;
 }

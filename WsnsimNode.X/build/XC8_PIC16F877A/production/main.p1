@@ -1,10 +1,7 @@
 Version 4.0 HI-TECH Software Intermediate Code
 [p mainexit ]
-"21 ./system.h
-[; ;./system.h: 21: void ConfigureOscillator(void);
-[v _ConfigureOscillator `(v ~T0 @X0 0 ef ]
-"23 ./user.h
-[; ;./user.h: 23: void InitApp(void);
+"31 ./user.h
+[; ;./user.h: 31: void InitApp(void);
 [v _InitApp `(v ~T0 @X0 0 ef ]
 "54 C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 54: __asm("INDF equ 00h");
@@ -186,6 +183,12 @@ Version 4.0 HI-TECH Software Intermediate Code
 "2363
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 2363: __asm("EECON2 equ 018Dh");
 [; <" EECON2 equ 018Dh ;# ">
+"33 ./user.h
+[; ;./user.h: 33: volatile char flags;
+[v _flags `Vuc ~T0 @X0 1 e ]
+"40
+[; ;./user.h: 40: double distance_cm;
+[v _distance_cm `d ~T0 @X0 1 e ]
 [v $root$_main `(v ~T0 @X0 0 e ]
 "26 main.c
 [; ;main.c: 26: void main(void)
@@ -195,9 +198,6 @@ Version 4.0 HI-TECH Software Intermediate Code
 {
 [e :U _main ]
 [f ]
-"29
-[; ;main.c: 29:     ConfigureOscillator();
-[e ( _ConfigureOscillator ..  ]
 "32
 [; ;main.c: 32:     InitApp();
 [e ( _InitApp ..  ]

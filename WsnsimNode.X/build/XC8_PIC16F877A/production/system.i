@@ -1839,17 +1839,5 @@ typedef uint16_t uintptr_t;
 # 10 "system.c" 2
 
 # 1 "./system.h" 1
-# 21 "./system.h"
-void ConfigureOscillator(void);
 # 12 "system.c" 2
 
-
-
-void ConfigureOscillator(void)
-{
-
-
-
-
-
-}

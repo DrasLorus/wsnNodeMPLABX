@@ -68,3 +68,5 @@ void MeasureHY(){
     i = EchoDuration();
     distance_cm = CalcDistance(i);
 }
+
+/* DS18B20 ********************************************************************/

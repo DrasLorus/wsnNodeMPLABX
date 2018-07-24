@@ -26,7 +26,7 @@
 void main(void)
 {
     /* Configure the oscillator for the device */
-    ConfigureOscillator();
+//    ConfigureOscillator();
 
     /* Initialize I/O and Peripherals for application */
     InitApp();

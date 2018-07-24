@@ -1847,10 +1847,8 @@ typedef uint16_t uintptr_t;
 # 1 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdbool.h" 1 3
 # 11 "./user.h" 2
 # 1 "./system.h" 1
-# 21 "./system.h"
-void ConfigureOscillator(void);
 # 12 "./user.h" 2
-# 25 "./user.h"
+# 31 "./user.h"
 void InitApp(void);
 
 volatile char flags;
@@ -1861,6 +1859,11 @@ int EchoDuration();
 __attribute__((inline)) double CalcDistance(int time);
 void MeasureHY();
 double distance_cm;
+
+
+void InitializationSeqDS();
+void Write1DS();
+void Write0DS();
 # 9 "interrupts.c" 2
 # 18 "interrupts.c"
 void __attribute__((picinterrupt(""))) isr(void)

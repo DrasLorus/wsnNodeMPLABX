@@ -179,15 +179,3 @@ Version 4.0 HI-TECH Software Intermediate Code
 "2363
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 2363: __asm("EECON2 equ 018Dh");
 [; <" EECON2 equ 018Dh ;# ">
-"15 system.c
-[; ;system.c: 15: void ConfigureOscillator(void)
-[v _ConfigureOscillator `(v ~T0 @X0 1 ef ]
-"16
-[; ;system.c: 16: {
-{
-[e :U _ConfigureOscillator ]
-[f ]
-"22
-[; ;system.c: 22: }
-[e :UE 95 ]
-}

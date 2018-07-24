@@ -1842,8 +1842,6 @@ typedef uint16_t uintptr_t;
 # 13 "main.c" 2
 
 # 1 "./system.h" 1
-# 21 "./system.h"
-void ConfigureOscillator(void);
 # 15 "main.c" 2
 # 1 "./user.h" 1
 
@@ -1858,20 +1856,28 @@ void ConfigureOscillator(void);
 # 10 "./user.h" 2
 # 1 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdbool.h" 1 3
 # 11 "./user.h" 2
-# 23 "./user.h"
+# 31 "./user.h"
 void InitApp(void);
+
+volatile char flags;
 
 
 void Trigger();
 int EchoDuration();
-int CalcDistance( int time);
-int MeasureHY();
+__attribute__((inline)) double CalcDistance(int time);
+void MeasureHY();
+double distance_cm;
+
+
+void InitializationSeqDS();
+void Write1DS();
+void Write0DS();
 # 16 "main.c" 2
 # 26 "main.c"
 void main(void)
 {
 
-    ConfigureOscillator();
+
 
 
     InitApp();
