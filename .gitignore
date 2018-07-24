@@ -51,8 +51,8 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-WsnsimNod.X/build
-WsnsimNod.X/debug
-WsnsimNod.X/dist
-WsnsimNod.X/nbproject
-WsnsimNod.X/*.txt
+WsnsimNode.X/build
+WsnsimNode.X/debug
+WsnsimNode.X/dist
+WsnsimNode.X/nbproject
+WsnsimNode.X/*.txt
