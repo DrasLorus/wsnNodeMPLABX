@@ -1,7 +1,2 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-WsnsimNod.X/build
-WsnsimNod.X/debug
-WsnsimNod.X/dist
-WsnsimNod.X/nbproject
-WsnsimNod.X/*.txt
