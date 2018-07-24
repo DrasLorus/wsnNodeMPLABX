@@ -1727,6 +1727,15 @@ extern __bank0 __bit __timeout;
 # 27 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\xc.h" 2 3
 # 7 "interrupts.c" 2
 
+# 1 "./user.h" 1
+
+
+
+
+
+
+
+
 # 1 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdint.h" 1 3
 # 13 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdint.h" 3
 typedef signed char int8_t;
@@ -1834,11 +1843,41 @@ typedef int16_t intptr_t;
 
 
 typedef uint16_t uintptr_t;
-# 9 "interrupts.c" 2
+# 10 "./user.h" 2
 # 1 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdbool.h" 1 3
-# 10 "interrupts.c" 2
-# 20 "interrupts.c"
+# 11 "./user.h" 2
+# 1 "./system.h" 1
+# 21 "./system.h"
+void ConfigureOscillator(void);
+# 12 "./user.h" 2
+# 25 "./user.h"
+void InitApp(void);
+
+volatile char flags;
+
+
+void Trigger();
+int EchoDuration();
+__attribute__((inline)) double CalcDistance(int time);
+void MeasureHY();
+double distance_cm;
+# 9 "interrupts.c" 2
+# 18 "interrupts.c"
 void __attribute__((picinterrupt(""))) isr(void)
 {
-# 47 "interrupts.c"
+# 28 "interrupts.c"
+    if(TMR1IF)
+    {
+        TMR1ON = 0;
+        flags = (flags & 0xFE) + 1;
+        TMR1IF=0;
+    }
+
+
+
+
+    else
+    {
+
+    }
 }

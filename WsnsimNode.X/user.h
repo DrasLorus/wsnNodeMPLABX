@@ -14,6 +14,7 @@
 #define ECHO RE1
 #define TRIG RE0
 #define SOUNDSPEED 340
+#define OOR (flags & 0x01 == 0x01)  /* Out Of Range Flag*/
 
 #define BAUDRATE 57600
 
@@ -22,6 +23,8 @@
 /******************************************************************************/
 
 void InitApp(void);                 /* I/O and Peripheral Initialization */
+
+volatile char flags;
 
 /* HY-SRF05 *******************************************************************/
 void Trigger();                     /* Launch a measure */

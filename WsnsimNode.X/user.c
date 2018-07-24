@@ -52,6 +52,8 @@ int EchoDuration(){
     d = TMR1H;          /* Extract the MSB */
     d <<= 8;            /* Put them on high position*/
     d += TMR1L;         /* Add the LSB */
+    TMR1H = 0x00;
+    TMR1L = 0x00;
     return d;           /* Return the result */
 }
 
@@ -65,6 +67,4 @@ void MeasureHY(){
     Trigger();
     i = EchoDuration();
     distance_cm = CalcDistance(i);
-    TMR1H = 0x00;
-    TMR1L = 0x00;
 }
