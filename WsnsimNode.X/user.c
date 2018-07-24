@@ -26,6 +26,7 @@ void InitApp(void)
     TRISE = 0x2;            /* RE0(TRIG)/RE2 output, RE1(ECHO) input */
     RE0 = 0;
     
+    
     /* Initialize peripherals */
 
     /* Enable interrupts */
@@ -45,5 +46,5 @@ int EchoDuration(){
     while(ECHO){
         t++;
     }
-    
+    return 
 }
