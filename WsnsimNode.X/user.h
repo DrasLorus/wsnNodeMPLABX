@@ -13,6 +13,7 @@
 /** HY-SRF05 ******************************************************************/
 #define ECHO RE1
 #define TRIG RE0
+#define SOUNDSPEED 340
 
 #define BAUDRATE 57600
 
@@ -25,8 +26,8 @@ void InitApp(void);                 /* I/O and Peripheral Initialization */
 /* HY-SRF05 *******************************************************************/
 void Trigger();                     /* Launch a measure */
 int EchoDuration();                 /* Return the raw duration of the echo */
-int CalcDistance( int time);        /* Return the distance in cm */
-int MeasureHY();                    /* Launch the HY measurement routine */
-
+inline double CalcDistance(int time);        /* Return the distance in cm */
+void MeasureHY();                    /* Launch the HY measurement routine */
+double distance_cm;
 
 #endif //USER_H

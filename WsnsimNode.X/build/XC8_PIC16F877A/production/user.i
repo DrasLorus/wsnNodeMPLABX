@@ -1856,14 +1856,15 @@ typedef uint16_t uintptr_t;
 # 21 "./system.h"
 void ConfigureOscillator(void);
 # 12 "./user.h" 2
-# 23 "./user.h"
+# 24 "./user.h"
 void InitApp(void);
 
 
 void Trigger();
 int EchoDuration();
-int CalcDistance( int time);
-int MeasureHY();
+__attribute__((inline)) double CalcDistance(int time);
+void MeasureHY();
+double distance_cm;
 # 13 "user.c" 2
 
 
@@ -1908,4 +1909,18 @@ int EchoDuration(){
     d <<= 8;
     d += TMR1L;
     return d;
+}
+
+__attribute__((inline)) double CalcDistance(int time){
+    return (((double)time/(double)20000000/4)*340/100/2);
+}
+
+
+void MeasureHY(){
+    int i;
+    Trigger();
+    i = EchoDuration();
+    distance_cm = CalcDistance(i);
+    TMR1H = 0x00;
+    TMR1L = 0x00;
 }

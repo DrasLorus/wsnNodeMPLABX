@@ -54,3 +54,17 @@ int EchoDuration(){
     d += TMR1L;         /* Add the LSB */
     return d;           /* Return the result */
 }
+
+inline double CalcDistance(int time){
+    return (((double)time/(double)FCY)*SOUNDSPEED/100/2);
+}
+
+
+void MeasureHY(){
+    int i;
+    Trigger();
+    i = EchoDuration();
+    distance_cm = CalcDistance(i);
+    TMR1H = 0x00;
+    TMR1L = 0x00;
+}
