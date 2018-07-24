@@ -1852,7 +1852,11 @@ typedef uint16_t uintptr_t;
 # 10 "./user.h" 2
 # 1 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdbool.h" 1 3
 # 11 "./user.h" 2
-# 22 "./user.h"
+# 1 "./system.h" 1
+# 21 "./system.h"
+void ConfigureOscillator(void);
+# 12 "./user.h" 2
+# 23 "./user.h"
 void InitApp(void);
 
 
@@ -1880,8 +1884,8 @@ void InitApp(void)
 
 
     T1CON = 0x00;
-    TMR1H = 0;
-    TMR1L = 0;
+    TMR1H = 0x00;
+    TMR1L = 0x00;
     T1CON = 0x00;
 
 }
@@ -1890,15 +1894,18 @@ void InitApp(void)
 
 void Trigger(){
     RE0 = 1;
-    _delay((unsigned long)((10)*(_XTAL_FREQ/4000000.0)));
+    _delay((unsigned long)((10)*(20000000/4000000.0)));
     RE0 = 0;
 }
 
 int EchoDuration(){
-    int t = 0;
+    int d = 0;
     while(!RE1);
-    while(RE1){
-        t++;
-    }
-    return t;
+    TMR1ON = 1;
+    while(RE1);
+    TMR1ON = 0;
+    d = TMR1H;
+    d <<= 8;
+    d += TMR1L;
+    return d;
 }

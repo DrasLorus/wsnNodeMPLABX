@@ -37,15 +37,20 @@ void InitApp(void)
 
 /* HY-SRF05 *******************************************************************/
 
-void Trigger(){
+void Trigger(){ 
     TRIG = 1;
     __delay_us(10);
     TRIG = 0;
 }
 
-int EchoDuration(){
-    int t = 0;
-    while(!ECHO);
-    TMR1ON = 1;
-    return t;
+int EchoDuration(){     
+    int d = 0;
+    while(!ECHO);       /* When Echo pin is driven High */
+    TMR1ON = 1;         /* Activate timer 1 and let it run */
+    while(ECHO);        /* Then, when the pin is driven low */
+    TMR1ON = 0;         /* Desactivate timer 1 */
+    d = TMR1H;          /* Extract the MSB */
+    d <<= 8;            /* Put them on high position*/
+    d += TMR1L;         /* Add the LSB */
+    return d;           /* Return the result */
 }

@@ -1858,7 +1858,7 @@ void ConfigureOscillator(void);
 # 10 "./user.h" 2
 # 1 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdbool.h" 1 3
 # 11 "./user.h" 2
-# 22 "./user.h"
+# 23 "./user.h"
 void InitApp(void);
 
 

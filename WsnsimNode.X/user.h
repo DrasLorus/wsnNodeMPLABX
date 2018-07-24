@@ -8,6 +8,7 @@
 
 #include <stdint.h>         /* For uint8_t definition */
 #include <stdbool.h>  
+#include "system.h"
 
 /** HY-SRF05 ******************************************************************/
 #define ECHO RE1
