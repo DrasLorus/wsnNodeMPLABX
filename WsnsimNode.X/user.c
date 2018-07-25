@@ -54,7 +54,7 @@ int EchoDuration(){
     return d;           /* Return the result */
 }
 
-inline double CalcDistance(int time){
+double CalcDistance(int time){
     return (((double)time/(double)FCY)*SOUNDSPEED/100/2);
 }
 
@@ -74,6 +74,12 @@ inline void ReleaseDS(){
 inline void DriveLowDS(){
     TRISB = 0x04;
     OUTDS = 0;
+}
+
+inline void ResetDS(){
+    DriveLowDS();
+    __delay_us(480);
+    ReleaseDS();
 }
 
 void InitializationSeqDS(){
@@ -121,14 +127,38 @@ void Write0DS(){
     __delay_us(5);
 }
 
-void SendDSInstruction();
+void SendInstructionDS(char c){
+    char i;
+    for( i = 0 ; i < 8 ; i++){
+        if((c & 0x01)){
+            Write1DS();
+        }else{
+            Write0DS();
+        }
+        c >>= 1;
+    }
+}
 
-void SkipRom();
+void SkipRom(){
+    SendInstructionDS(SKIPROM);
+}
 
-void ConvertT();
+void ConvertT(){
+    SendInstructionDS(CONVERTT);
+    while(!OUTDS);
+}
 
-void ReadScratchPad(char c[]);
 
-void ReadDS(char * c);
+void ReadTemperature(char c[]){
+    SendInstructionDS(READSCRATCHPAD);
 
-void MeasureDS();
+}
+
+
+void ReadDS(char * c){
+    
+}
+
+void MeasureDS(){
+    
+}

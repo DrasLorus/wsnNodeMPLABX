@@ -1,8 +1,14 @@
 Version 4.0 HI-TECH Software Intermediate Code
 [p mainexit ]
-"32 ./user.h
-[; ;./user.h: 32: void InitApp(void);
+"38 ./user.h
+[; ;./user.h: 38: void InitApp(void);
 [v _InitApp `(v ~T0 @X0 0 ef ]
+"46
+[; ;./user.h: 46: void MeasureHY(void);
+[v _MeasureHY `(v ~T0 @X0 0 ef ]
+"59
+[; ;./user.h: 59: void MeasureDS(void);
+[v _MeasureDS `(v ~T0 @X0 0 ef ]
 "54 C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 54: __asm("INDF equ 00h");
 [; <" INDF equ 00h ;# ">
@@ -183,17 +189,17 @@ Version 4.0 HI-TECH Software Intermediate Code
 "2363
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 2363: __asm("EECON2 equ 018Dh");
 [; <" EECON2 equ 018Dh ;# ">
-"34 ./user.h
-[; ;./user.h: 34: volatile char flags;
+"40 ./user.h
+[; ;./user.h: 40: volatile char flags;
 [v _flags `Vuc ~T0 @X0 1 e ]
-"41
-[; ;./user.h: 41: double distance_cm;
-[v _distance_cm `d ~T0 @X0 1 e ]
-"52
-[; ;./user.h: 52: char temperatureDS[2];
+"48
+[; ;./user.h: 48: volatile double distance_cm;
+[v _distance_cm `Vd ~T0 @X0 1 e ]
+"61
+[; ;./user.h: 61: char temperatureDS[2];
 [v _temperatureDS `uc ~T0 @X0 -> 2 `i e ]
-"53
-[; ;./user.h: 53: char bufferDS;
+"62
+[; ;./user.h: 62: char bufferDS;
 [v _bufferDS `uc ~T0 @X0 1 e ]
 [v $root$_main `(v ~T0 @X0 0 e ]
 "26 main.c
@@ -214,15 +220,21 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;main.c: 36:     {
 {
 "37
-[; ;main.c: 37:         __asm("SLEEP");
-[; <" SLEEP ;# ">
+[; ;main.c: 37:         MeasureHY();
+[e ( _MeasureHY ..  ]
 "38
-[; ;main.c: 38:     }
+[; ;main.c: 38:         MeasureDS();
+[e ( _MeasureDS ..  ]
+"39
+[; ;main.c: 39:         __asm("SLEEP");
+[; <" SLEEP ;# ">
+"40
+[; ;main.c: 40:     }
 }
 [e :U 96 ]
 [e $U 97  ]
 [e :U 98 ]
-"40
-[; ;main.c: 40: }
+"42
+[; ;main.c: 42: }
 [e :UE 95 ]
 }

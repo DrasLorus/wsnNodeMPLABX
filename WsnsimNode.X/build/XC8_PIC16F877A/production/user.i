@@ -1840,43 +1840,36 @@ typedef uint16_t uintptr_t;
 # 11 "user.c" 2
 
 # 1 "./user.h" 1
-
-
-
-
-
-
-
-
+# 11 "./user.h"
 # 1 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdint.h" 1 3
-# 10 "./user.h" 2
-# 1 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdbool.h" 1 3
-# 11 "./user.h" 2
-# 1 "./system.h" 1
 # 12 "./user.h" 2
-# 36 "./user.h"
+# 1 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdbool.h" 1 3
+# 13 "./user.h" 2
+# 1 "./system.h" 1
+# 14 "./user.h" 2
+# 38 "./user.h"
 void InitApp(void);
 
 volatile char flags;
 
 
-void TriggerHY();
-int EchoDuration();
-__attribute__((inline)) double CalcDistance(int time);
-void MeasureHY();
+void TriggerHY(void);
+int EchoDuration(void);
+double CalcDistance(int time);
+void MeasureHY(void);
 
-static double distance_cm;
+volatile double distance_cm;
 
 
-void InitializationSeqDS();
-void Write1DS();
-void Write0DS();
-void SendDSInstruction();
-void SkipRom();
-void ConvertT();
+void InitializationSeqDS(void);
+void Write1DS(void);
+void Write0DS(void);
+void SendInstructionDS(char c);
+void SkipRom(void);
+void ConvertT(void);
 void ReadScratchPad(char c[]);
 void ReadDS(char * c);
-void MeasureDS();
+void MeasureDS(void);
 
 char temperatureDS[2];
 char bufferDS;
@@ -1925,7 +1918,7 @@ int EchoDuration(){
     return d;
 }
 
-__attribute__((inline)) double CalcDistance(int time){
+double CalcDistance(int time){
     return (((double)time/(double)20000000/4)*340/100/2);
 }
 
@@ -1992,14 +1985,36 @@ void Write0DS(){
     _delay((unsigned long)((5)*(20000000/4000000.0)));
 }
 
-void SendDSInstruction();
+void SendInstructionDS(char c){
+    char i;
+    for( i = 0 ; i < 8 ; i++){
+        if((c & 0x01)){
+            Write1DS();
+        }else{
+            Write0DS();
+        }
+        c >>= 1;
+    }
+}
 
-void SkipRom();
+void SkipRom(){
+    SendInstructionDS(0xCC);
+}
 
-void ConvertT();
+void ConvertT(){
+    SendInstructionDS(0x44);
+}
 
-void ReadScratchPad(char c[]);
 
-void ReadDS(char * c);
+void ReadScratchPad(char c[]){
+    SendInstructionDS(0xBE);
+}
 
-void MeasureDS();
+
+void ReadDS(char * c){
+
+}
+
+void MeasureDS(){
+
+}

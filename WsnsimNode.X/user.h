@@ -40,23 +40,23 @@ void InitApp(void);                 /* I/O and Peripheral Initialization */
 volatile char flags;
 
 /* HY-SRF05 *******************************************************************/
-void TriggerHY();                     /* Launch a measure */
-int EchoDuration();                 /* Return the raw duration of the echo */
-inline double CalcDistance(int time);        /* Return the distance in cm */
-void MeasureHY();                    /* Launch the HY measurement routine */
+void TriggerHY(void);                     /* Launch a measure */
+int EchoDuration(void);                 /* Return the raw duration of the echo */
+double CalcDistance(int time);        /* Return the distance in cm */
+void MeasureHY(void);                    /* Launch the HY measurement routine */
 
 volatile double distance_cm;
 
 /* DS18B20 ********************************************************************/
-void InitializationSeqDS();
-void Write1DS();
-void Write0DS();
-void SendDSInstruction();
-void SkipRom();
-void ConvertT();
-void ReadScratchPad(char c[]);
+void InitializationSeqDS(void);
+void Write1DS(void);
+void Write0DS(void);
+void SendInstructionDS(char c);
+void SkipRom(void);
+void ConvertT(void);
+void ReadTemperature(char c[]);
 void ReadDS(char * c);
-void MeasureDS();
+void MeasureDS(void);
 
 char temperatureDS[2];
 char bufferDS;

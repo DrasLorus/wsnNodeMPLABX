@@ -187,12 +187,18 @@ Version 4.0 HI-TECH Software Intermediate Code
 "2363
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 2363: __asm("EECON2 equ 018Dh");
 [; <" EECON2 equ 018Dh ;# ">
-"33 ./user.h
-[; ;./user.h: 33: volatile char flags;
+"40 ./user.h
+[; ;./user.h: 40: volatile char flags;
 [v _flags `Vuc ~T0 @X0 1 e ]
-"40
-[; ;./user.h: 40: double distance_cm;
-[v _distance_cm `d ~T0 @X0 1 e ]
+"48
+[; ;./user.h: 48: volatile double distance_cm;
+[v _distance_cm `Vd ~T0 @X0 1 e ]
+"61
+[; ;./user.h: 61: char temperatureDS[2];
+[v _temperatureDS `uc ~T0 @X0 -> 2 `i e ]
+"62
+[; ;./user.h: 62: char bufferDS;
+[v _bufferDS `uc ~T0 @X0 1 e ]
 [v $root$_isr `(v ~T0 @X0 0 e ]
 "18 interrupts.c
 [; ;interrupts.c: 18: void __attribute__((picinterrupt(""))) isr(void)
@@ -202,36 +208,36 @@ Version 4.0 HI-TECH Software Intermediate Code
 {
 [e :U _isr ]
 [f ]
-"28
-[; ;interrupts.c: 28:     if(TMR1IF)
+"26
+[; ;interrupts.c: 26:     if(TMR1IF)
 [e $ ! _TMR1IF 96  ]
-"29
-[; ;interrupts.c: 29:     {
+"27
+[; ;interrupts.c: 27:     {
 {
-"30
-[; ;interrupts.c: 30:         TMR1ON = 0;
+"28
+[; ;interrupts.c: 28:         TMR1ON = 0;
 [e = _TMR1ON -> -> 0 `i `b ]
-"31
-[; ;interrupts.c: 31:         flags = (flags & 0xFE) + 1;
+"29
+[; ;interrupts.c: 29:         flags = (flags & 0xFE) + 0x1;
 [e = _flags -> + & -> _flags `i -> 254 `i -> 1 `i `uc ]
-"32
-[; ;interrupts.c: 32:         TMR1IF=0;
+"30
+[; ;interrupts.c: 30:         TMR1IF=0;
 [e = _TMR1IF -> -> 0 `i `b ]
-"33
-[; ;interrupts.c: 33:     }
+"31
+[; ;interrupts.c: 31:     }
 }
 [e $U 97  ]
-"38
-[; ;interrupts.c: 38:     else
+"36
+[; ;interrupts.c: 36:     else
 [e :U 96 ]
-"39
-[; ;interrupts.c: 39:     {
+"37
+[; ;interrupts.c: 37:     {
 {
-"41
-[; ;interrupts.c: 41:     }
+"39
+[; ;interrupts.c: 39:     }
 }
 [e :U 97 ]
-"42
-[; ;interrupts.c: 42: }
+"40
+[; ;interrupts.c: 40: }
 [e :UE 95 ]
 }
