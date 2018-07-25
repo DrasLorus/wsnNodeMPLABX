@@ -28,17 +28,13 @@ void InitApp(void)
     
     TRISB = 0x00;
             
-    /* Initialize peripherals */
-    T1CON = 0x00;
-    TMR1H = 0x00;
-    TMR1L = 0x00;
-    T1CON = 0x00;
+    /* Initialize peripherals */ 
+    
     /* Enable interrupts */
 }
 
 /* HY-SRF05 *******************************************************************/
-
-void Trigger(){ 
+void TriggerHY(){ 
     TRIG = 1;
     __delay_us(10);
     TRIG = 0;
@@ -65,9 +61,74 @@ inline double CalcDistance(int time){
 
 void MeasureHY(){
     int i;
-    Trigger();
+    TriggerHY();
     i = EchoDuration();
     distance_cm = CalcDistance(i);
 }
 
 /* DS18B20 ********************************************************************/
+inline void ReleaseDS(){
+    TRISB = 0x00;
+}
+
+inline void DriveLowDS(){
+    TRISB = 0x04;
+    OUTDS = 0;
+}
+
+void InitializationSeqDS(){
+    T2CON = 0x02;
+    TMR2  = 0x00;
+    
+    DriveLowDS();
+    __delay_us(480);
+    ReleaseDS();
+    
+    TMR2ON = 1;
+    if(!OUTDS){
+        __delay_us(1);
+    }
+    while(OUTDS && !TMR2IF);
+    if(OUTDS){
+        SETEROI;
+        TMR2ON = 0;
+        TMR2IF = 0;
+        exit();
+    }
+    while(!OUTDS && !TMR2IF);
+    if(!OUTDS){
+        SETEROI;
+        TMR2ON = 0;
+        TMR2IF = 0;
+        exit();
+    }
+    while(!TMR2IF);
+    TMR2ON = 0;
+    TMR2IF = 0;
+}
+
+void Write1DS(){
+    DriveLowDS();
+    __delay_us(5);
+    ReleaseDS();
+    __delay_us(65);
+}
+
+void Write0DS(){
+    DriveLowDS();
+    __delay_us(65);
+    ReleaseDS();
+    __delay_us(5);
+}
+
+void SendDSInstruction();
+
+void SkipRom();
+
+void ConvertT();
+
+void ReadScratchPad(char c[]);
+
+void ReadDS(char * c);
+
+void MeasureDS();

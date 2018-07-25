@@ -1854,17 +1854,18 @@ typedef uint16_t uintptr_t;
 # 11 "./user.h" 2
 # 1 "./system.h" 1
 # 12 "./user.h" 2
-# 32 "./user.h"
+# 36 "./user.h"
 void InitApp(void);
 
 volatile char flags;
 
 
-void Trigger();
+void TriggerHY();
 int EchoDuration();
 __attribute__((inline)) double CalcDistance(int time);
 void MeasureHY();
-double distance_cm;
+
+static double distance_cm;
 
 
 void InitializationSeqDS();
@@ -1875,6 +1876,8 @@ void SkipRom();
 void ConvertT();
 void ReadScratchPad(char c[]);
 void ReadDS(char * c);
+void MeasureDS();
+
 char temperatureDS[2];
 char bufferDS;
 # 13 "user.c" 2
@@ -1897,16 +1900,12 @@ void InitApp(void)
     TRISB = 0x00;
 
 
-    T1CON = 0x00;
-    TMR1H = 0x00;
-    TMR1L = 0x00;
-    T1CON = 0x00;
+
 
 }
 
 
-
-void Trigger(){
+void TriggerHY(){
     RE0 = 1;
     _delay((unsigned long)((10)*(20000000/4000000.0)));
     RE0 = 0;
@@ -1933,7 +1932,74 @@ __attribute__((inline)) double CalcDistance(int time){
 
 void MeasureHY(){
     int i;
-    Trigger();
+    TriggerHY();
     i = EchoDuration();
     distance_cm = CalcDistance(i);
 }
+
+
+__attribute__((inline)) void ReleaseDS(){
+    TRISB = 0x00;
+}
+
+__attribute__((inline)) void DriveLowDS(){
+    TRISB = 0x04;
+    RB2 = 0;
+}
+
+void InitializationSeqDS(){
+    T2CON = 0x02;
+    TMR2 = 0x00;
+
+    DriveLowDS();
+    _delay((unsigned long)((480)*(20000000/4000000.0)));
+    ReleaseDS();
+
+    TMR2ON = 1;
+    if(!RB2){
+        _delay((unsigned long)((1)*(20000000/4000000.0)));
+    }
+    while(RB2 && !TMR2IF);
+    if(RB2){
+        flags = (flags & 0xFD) + 0x2;
+        TMR2ON = 0;
+        TMR2IF = 0;
+        do { ((void)0); __asm("ljmp $"); }while(0);
+    }
+    while(!RB2 && !TMR2IF);
+    if(!RB2){
+        flags = (flags & 0xFD) + 0x2;
+        TMR2ON = 0;
+        TMR2IF = 0;
+        do { ((void)0); __asm("ljmp $"); }while(0);
+    }
+    while(!TMR2IF);
+    TMR2ON = 0;
+    TMR2IF = 0;
+}
+
+void Write1DS(){
+    DriveLowDS();
+    _delay((unsigned long)((5)*(20000000/4000000.0)));
+    ReleaseDS();
+    _delay((unsigned long)((65)*(20000000/4000000.0)));
+}
+
+void Write0DS(){
+    DriveLowDS();
+    _delay((unsigned long)((65)*(20000000/4000000.0)));
+    ReleaseDS();
+    _delay((unsigned long)((5)*(20000000/4000000.0)));
+}
+
+void SendDSInstruction();
+
+void SkipRom();
+
+void ConvertT();
+
+void ReadScratchPad(char c[]);
+
+void ReadDS(char * c);
+
+void MeasureDS();

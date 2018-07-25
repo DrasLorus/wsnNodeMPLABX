@@ -21,15 +21,13 @@ void __interrupt() isr(void)
     conditional statements are not handled within 3 seperate if blocks.
     Do not use a seperate if block for each interrupt flag to avoid run
     time errors. */
- 
-    /* TODO Add interrupt routine code here. */
 
     /* Determine which flag generated the interrupt */
     if(TMR1IF)
     {   
         TMR1ON = 0;
-        flags = (flags & 0xFE) + 1;
-        TMR1IF=0; /* Clear Interrupt Flag 1 */
+        SETOOR;
+        TMR1IF=0; /* Clear Interrupt Flag */
     }
     /*else if (<Interrupt Flag 2>)
     {

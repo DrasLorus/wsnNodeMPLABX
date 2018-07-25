@@ -34,6 +34,8 @@ void main(void)
 
     while(1)
     {
+        MeasureHY();
+//        MeasureDS();
         asm("SLEEP");
     }
 
