@@ -1854,7 +1854,7 @@ typedef uint16_t uintptr_t;
 # 11 "./user.h" 2
 # 1 "./system.h" 1
 # 12 "./user.h" 2
-# 31 "./user.h"
+# 32 "./user.h"
 void InitApp(void);
 
 volatile char flags;
@@ -1870,6 +1870,13 @@ double distance_cm;
 void InitializationSeqDS();
 void Write1DS();
 void Write0DS();
+void SendDSInstruction();
+void SkipRom();
+void ConvertT();
+void ReadScratchPad(char c[]);
+void ReadDS(char * c);
+char temperatureDS[2];
+char bufferDS;
 # 13 "user.c" 2
 
 
@@ -1887,6 +1894,7 @@ void InitApp(void)
     TRISE = 0x2;
     RE0 = 0;
 
+    TRISB = 0x00;
 
 
     T1CON = 0x00;

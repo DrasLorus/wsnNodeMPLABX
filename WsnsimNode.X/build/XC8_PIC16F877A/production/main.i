@@ -1856,7 +1856,7 @@ typedef uint16_t uintptr_t;
 # 10 "./user.h" 2
 # 1 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdbool.h" 1 3
 # 11 "./user.h" 2
-# 31 "./user.h"
+# 32 "./user.h"
 void InitApp(void);
 
 volatile char flags;
@@ -1872,6 +1872,13 @@ double distance_cm;
 void InitializationSeqDS();
 void Write1DS();
 void Write0DS();
+void SendDSInstruction();
+void SkipRom();
+void ConvertT();
+void ReadScratchPad(char c[]);
+void ReadDS(char * c);
+char temperatureDS[2];
+char bufferDS;
 # 16 "main.c" 2
 # 26 "main.c"
 void main(void)
@@ -1885,7 +1892,7 @@ void main(void)
 
     while(1)
     {
-
+        __asm("SLEEP");
     }
 
 }

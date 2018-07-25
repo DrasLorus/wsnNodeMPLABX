@@ -26,7 +26,8 @@ void InitApp(void)
     TRISE = 0x2;            /* RE0(TRIG)/RE2 output, RE1(ECHO) input */
     RE0 = 0;
     
-    
+    TRISB = 0x00;
+            
     /* Initialize peripherals */
     T1CON = 0x00;
     TMR1H = 0x00;

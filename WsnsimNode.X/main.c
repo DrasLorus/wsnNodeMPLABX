@@ -34,7 +34,7 @@ void main(void)
 
     while(1)
     {
-        /* TODO <INSERT USER APPLICATION CODE HERE> */
+        asm("SLEEP");
     }
 
 }

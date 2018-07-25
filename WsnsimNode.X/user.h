@@ -11,18 +11,19 @@
 #include "system.h"
 
 /* HY-SRF05 *******************************************************************/
-#define ECHO RE1
-#define TRIG RE0
-#define SOUNDSPEED 340
-#define OOR (flags & 0x01 == 0x01)  /* Out Of Range Flag*/
+#define ECHO            RE1
+#define TRIG            RE0
+#define SOUNDSPEED      340
+#define OOR             (flags & 0x01 == 0x01)  /* Out Of Range Flag*/
 
 /* DS18B20 ********************************************************************/
+#define DSPIN           RB2
 #define SKIPROM         0xCC
 #define CONVERTT        0x44
-#define READSCRATCHPAD  0x4E
+#define READSCRATCHPAD  0xBE
 
 
-#define BAUDRATE 57600
+#define BAUDRATE        57600
 
 /******************************************************************************/
 /* User Function Prototypes                                                   */
@@ -43,5 +44,12 @@ double distance_cm;
 void InitializationSeqDS();
 void Write1DS();
 void Write0DS();
+void SendDSInstruction();
+void SkipRom();
+void ConvertT();
+void ReadScratchPad(char c[]);
+void ReadDS(char * c);
+char temperatureDS[2];
+char bufferDS;
 
 #endif //USER_H
