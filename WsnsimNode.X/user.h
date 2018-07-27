@@ -1,11 +1,10 @@
-#pragma once
 
 /******************************************************************************/
 /* User Level #define Macros                                                  */
 /******************************************************************************/
 #ifndef USER_H
 #define USER_H
-/* TODO Application specific user parameters used in user.c may go here */
+
 #include <xc.h>
 
 #include <stdint.h>         /* For uint8_t definition */
@@ -40,10 +39,10 @@ void InitApp(void);                 /* I/O and Peripheral Initialization */
 volatile char flags;
 
 /* HY-SRF05 *******************************************************************/
-void TriggerHY(void);                     /* Launch a measure */
+void TriggerHY(void);                   /* Launch a measure */
 int EchoDuration(void);                 /* Return the raw duration of the echo */
-double CalcDistance(int time);        /* Return the distance in cm */
-void MeasureHY(void);                    /* Launch the HY measurement routine */
+double CalcDistance(int time);          /* Return the distance in cm */
+void MeasureHY(void);                   /* Launch the HY measurement routine */
 
 volatile double distance_cm;
 
@@ -59,5 +58,13 @@ char ReadDS(void);
 void MeasureDS(void);
 
 volatile char temperatureDS[2];
+
+/* DHT11 **********************************************************************/
+void StartSeqDHT(void);
+char ReadBitDHT(void);
+void ReadFullDHT(void);
+void MeasureDHT(void);
+
+volatile char temperatureDHT[5];
 
 #endif //USER_H

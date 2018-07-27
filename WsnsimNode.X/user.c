@@ -175,10 +175,10 @@ void ConvertT(){
 
 void ReadTemperatureDS(){
     SendInstructionDS(READSCRATCHPAD);
-    int i;
-    for ( i = 0 ; i < 16 ; i++){
-        temperatureDS[(i>>3)] <<= 1;
-        temperatureDS[(i>>3)] += ReadDS();
+    int i;  
+    for ( i = 0 ; i < 16 ; i++){            
+        temperatureDS[(i>>3)] >>= 1;
+        temperatureDS[(i>>3)] += (ReadDS() << 7);
     }
     ResetDS();
 }
@@ -202,5 +202,15 @@ char ReadDS(){
 }
 
 void MeasureDS(){
+    InitializationSeqDS();
+    SkipRom();
+    ConvertT();
     
+    InitializationSeqDS();
+    SkipRom();
+    ReadTemperatureDS();  
 }
+
+/******************************************************************************/
+/* DHT11 **********************************************************************/
+/******************************************************************************/

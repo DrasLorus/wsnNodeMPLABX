@@ -1728,7 +1728,7 @@ extern __bank0 __bit __timeout;
 # 7 "interrupts.c" 2
 
 # 1 "./user.h" 1
-# 11 "./user.h"
+# 10 "./user.h"
 # 1 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdint.h" 1 3
 # 13 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdint.h" 3
 typedef signed char int8_t;
@@ -1836,12 +1836,12 @@ typedef int16_t intptr_t;
 
 
 typedef uint16_t uintptr_t;
-# 12 "./user.h" 2
+# 11 "./user.h" 2
 # 1 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdbool.h" 1 3
-# 13 "./user.h" 2
+# 12 "./user.h" 2
 # 1 "./system.h" 1
-# 14 "./user.h" 2
-# 38 "./user.h"
+# 13 "./user.h" 2
+# 37 "./user.h"
 void InitApp(void);
 
 volatile char flags;
@@ -1861,12 +1861,14 @@ void Write0DS(void);
 void SendInstructionDS(char c);
 void SkipRom(void);
 void ConvertT(void);
-void ReadTemperature(char c[]);
+void ReadTemperature(void);
 char ReadDS(void);
 void MeasureDS(void);
 
-char temperatureDS[2];
-char bufferDS;
+volatile char temperatureDS[2];
+
+
+void StartSeqDHT(void);
 # 9 "interrupts.c" 2
 # 18 "interrupts.c"
 void __attribute__((picinterrupt(""))) isr(void)
