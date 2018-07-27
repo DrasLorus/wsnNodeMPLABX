@@ -1869,8 +1869,8 @@ void Write0DS(void);
 void SendInstructionDS(char c);
 void SkipRom(void);
 void ConvertT(void);
-void ReadScratchPad(char c[]);
-void ReadDS(char * c);
+void ReadTemperature(char c[]);
+char ReadDS(void);
 void MeasureDS(void);
 
 char temperatureDS[2];

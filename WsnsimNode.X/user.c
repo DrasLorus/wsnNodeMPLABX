@@ -11,12 +11,6 @@
 
 #include "user.h"
 
-/******************************************************************************/
-/* User Functions                                                             */
-/******************************************************************************/
-
-/* <Initialize variables in user.h and insert code for user algorithms.> */
-
 void InitApp(void)
 {
     /* TODO Initialize User Ports/Peripherals/Project here */
@@ -33,7 +27,9 @@ void InitApp(void)
     /* Enable interrupts */
 }
 
+/******************************************************************************/
 /* HY-SRF05 *******************************************************************/
+/******************************************************************************/
 void TriggerHY(){ 
     TRIG = 1;
     __delay_us(10);
@@ -65,8 +61,9 @@ void MeasureHY(){
     i = EchoDuration();
     distance_cm = CalcDistance(i);
 }
-
+/******************************************************************************/
 /* DS18B20 ********************************************************************/
+/******************************************************************************/
 inline void ReleaseDS(){
     TRISB = 0x00;
 }
@@ -76,15 +73,40 @@ inline void DriveLowDS(){
     OUTDS = 0;
 }
 
-inline void ResetDS(){
+inline void WaitTMR2IFDS(){
+    TMR2ON = 1;
+    while(!TMR2IF);
+    TMR2ON = 0;
+    TMR2  = 0;
+    TMR2IF = 0;
+}
+
+void TMR2Config480us(){
+    TMR2ON = 0;
+    T2CON = 0x02;
+    TMR2  = 0;
+    PR2   = 150;        /* 150 x 16 x (1/20)E-6 = 480E-6 */
+}
+
+void TMR2Config10us(){
+    TMR2ON = 0;
+    T2CON = 0x00;
+    TMR2  = 0;
+    PR2   = 50;        /* 50 x (1/20)E-6 = 10E-6 */
+}
+
+void ResetDS(){
+    TMR2Config480us(); 
+    
     DriveLowDS();
-    __delay_us(480);
-    ReleaseDS();
+    WaitTMR2IFDS();
+    
+    ReleaseDS();   
+    WaitTMR2IFDS();
 }
 
 void InitializationSeqDS(){
-    T2CON = 0x02;
-    TMR2  = 0x00;
+    TMR2Config480us();       
     
     DriveLowDS();
     __delay_us(480);
@@ -141,22 +163,42 @@ void SendInstructionDS(char c){
 
 void SkipRom(){
     SendInstructionDS(SKIPROM);
+    __delay_us(1);
 }
 
 void ConvertT(){
     SendInstructionDS(CONVERTT);
     while(!OUTDS);
+    __delay_us(1);
 }
 
 
-void ReadTemperature(char c[]){
+void ReadTemperatureDS(){
     SendInstructionDS(READSCRATCHPAD);
-
+    int i;
+    for ( i = 0 ; i < 16 ; i++){
+        temperatureDS[(i>>3)] <<= 1;
+        temperatureDS[(i>>3)] += ReadDS();
+    }
+    ResetDS();
 }
 
 
-void ReadDS(char * c){
+char ReadDS(){
+    TMR2Config10us();
+    char c = 0;
     
+    DriveLowDS();
+    __delay_us(1);
+    ReleaseDS();
+    TMR2ON = 1;
+    while(!TMR2IF){
+        c = OUTDS;
+    }
+    TMR2ON = 0;
+    TMR2IF = 0;
+    __delay_us(50);
+    return c;
 }
 
 void MeasureDS(){

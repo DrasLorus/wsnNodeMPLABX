@@ -1847,23 +1847,23 @@ void InitApp(void);
 volatile char flags;
 
 
-void TriggerHY();
-int EchoDuration();
+void TriggerHY(void);
+int EchoDuration(void);
 double CalcDistance(int time);
 void MeasureHY(void);
 
 volatile double distance_cm;
 
 
-void InitializationSeqDS();
-void Write1DS();
-void Write0DS();
-void SendDSInstruction(char c);
-void SkipRom();
-void ConvertT();
-void ReadScratchPad(char c[]);
-void ReadDS(char * c);
-void MeasureDS();
+void InitializationSeqDS(void);
+void Write1DS(void);
+void Write0DS(void);
+void SendInstructionDS(char c);
+void SkipRom(void);
+void ConvertT(void);
+void ReadTemperature(char c[]);
+char ReadDS(void);
+void MeasureDS(void);
 
 char temperatureDS[2];
 char bufferDS;

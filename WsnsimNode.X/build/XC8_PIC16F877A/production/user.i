@@ -1867,8 +1867,8 @@ void Write0DS(void);
 void SendInstructionDS(char c);
 void SkipRom(void);
 void ConvertT(void);
-void ReadScratchPad(char c[]);
-void ReadDS(char * c);
+void ReadTemperature(char c[]);
+char ReadDS(void);
 void MeasureDS(void);
 
 char temperatureDS[2];
@@ -1940,9 +1940,40 @@ __attribute__((inline)) void DriveLowDS(){
     RB2 = 0;
 }
 
-void InitializationSeqDS(){
+__attribute__((inline)) void WaitTMR2IFDS(){
+    TMR2ON = 1;
+    while(!TMR2IF);
+    TMR2ON = 0;
+    TMR2 = 0;
+    TMR2IF = 0;
+}
+
+void TMR2Config480us(){
+    TMR2ON = 0;
     T2CON = 0x02;
-    TMR2 = 0x00;
+    TMR2 = 0;
+    PR2 = 150;
+}
+
+void TMR2Config10us(){
+    TMR2ON = 0;
+    T2CON = 0x00;
+    TMR2 = 0;
+    PR2 = 50;
+}
+
+void ResetDS(){
+    TMR2Config480us();
+
+    DriveLowDS();
+    WaitTMR2IFDS();
+
+    ReleaseDS();
+    WaitTMR2IFDS();
+}
+
+void InitializationSeqDS(){
+    TMR2Config480us();
 
     DriveLowDS();
     _delay((unsigned long)((480)*(20000000/4000000.0)));
@@ -1999,20 +2030,42 @@ void SendInstructionDS(char c){
 
 void SkipRom(){
     SendInstructionDS(0xCC);
+    _delay((unsigned long)((1)*(20000000/4000000.0)));
 }
 
 void ConvertT(){
     SendInstructionDS(0x44);
+    while(!RB2);
+    _delay((unsigned long)((1)*(20000000/4000000.0)));
 }
 
 
-void ReadScratchPad(char c[]){
+void ReadTemperature(char c[]){
     SendInstructionDS(0xBE);
+    int i;
+    for ( i = 0 ; i < 16 ; i++){
+        c[1] = 1;
+        c[(i>>3)] += ReadDS();
+    }
+    ResetDS();
 }
 
 
-void ReadDS(char * c){
+char ReadDS(){
+    TMR2Config10us();
+    char c = 0;
 
+    DriveLowDS();
+    _delay((unsigned long)((1)*(20000000/4000000.0)));
+    ReleaseDS();
+    TMR2ON = 1;
+    while(!TMR2IF){
+        c = RB2;
+    }
+    TMR2ON = 0;
+    TMR2IF = 0;
+    _delay((unsigned long)((50)*(20000000/4000000.0)));
+    return c;
 }
 
 void MeasureDS(){

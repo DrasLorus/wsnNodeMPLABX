@@ -54,11 +54,10 @@ void Write0DS(void);
 void SendInstructionDS(char c);
 void SkipRom(void);
 void ConvertT(void);
-void ReadTemperature(char c[]);
-void ReadDS(char * c);
+void ReadTemperature(void);
+char ReadDS(void);
 void MeasureDS(void);
 
-char temperatureDS[2];
-char bufferDS;
+volatile char temperatureDS[2];
 
 #endif //USER_H
