@@ -187,17 +187,17 @@ Version 4.0 HI-TECH Software Intermediate Code
 "2363
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 2363: __asm("EECON2 equ 018Dh");
 [; <" EECON2 equ 018Dh ;# ">
-"45 ./user.h
-[; ;./user.h: 45: volatile char flags;
+"48 ./user.h
+[; ;./user.h: 48: volatile char flags;
 [v _flags `Vuc ~T0 @X0 1 e ]
-"53
-[; ;./user.h: 53: volatile double distance_cm;
+"56
+[; ;./user.h: 56: volatile double distance_cm;
 [v _distance_cm `Vd ~T0 @X0 1 e ]
-"66
-[; ;./user.h: 66: volatile char temperatureDS[2];
+"69
+[; ;./user.h: 69: volatile char temperatureDS[2];
 [v _temperatureDS `Vuc ~T0 @X0 -> 2 `i e ]
-"73
-[; ;./user.h: 73: volatile char DatasDHT[5];
+"76
+[; ;./user.h: 76: volatile char DatasDHT[5];
 [v _DatasDHT `Vuc ~T0 @X0 -> 5 `i e ]
 [v $root$_isr `(v ~T0 @X0 0 e ]
 "18 interrupts.c

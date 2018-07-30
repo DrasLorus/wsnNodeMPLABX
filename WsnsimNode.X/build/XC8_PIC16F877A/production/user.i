@@ -1847,7 +1847,7 @@ typedef uint16_t uintptr_t;
 # 12 "./user.h" 2
 # 1 "./system.h" 1
 # 13 "./user.h" 2
-# 43 "./user.h"
+# 46 "./user.h"
 void InitApp(void);
 
 volatile char flags;
@@ -1879,6 +1879,15 @@ __attribute__((inline)) void ReadBitDHT(char * c);
 void MeasureDHT(void);
 
 volatile char DatasDHT[5];
+
+
+void SendCharSIM(char c);
+
+void ReceiveCharSIM(char * c);
+
+void SendStringSIM(char c[], uint8_t size);
+
+void SyncPicSIM(void);
 # 13 "user.c" 2
 
 void InitApp(void)
@@ -1894,7 +1903,19 @@ void InitApp(void)
 
 
 
+    TRISC = 0x80;
+    TX9 = 0;
+    TXEN = 0;
+    SYNC = 0;
+    BRGH = 1;
+    SPEN = 1;
+    CREN = 0;
+    ADDEN = 0;
 
+    SPBRG = 129;
+
+
+    GIE = 0;
 }
 
 
@@ -2155,5 +2176,5 @@ void MeasureDHT(void){
         DatasDHT[(i-1)>>3] += buff;
         i--;
     }
-# 298 "user.c"
+# 310 "user.c"
 }

@@ -1849,7 +1849,7 @@ typedef uint16_t uintptr_t;
 # 11 "./user.h" 2
 # 1 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdbool.h" 1 3
 # 12 "./user.h" 2
-# 43 "./user.h"
+# 46 "./user.h"
 void InitApp(void);
 
 volatile char flags;
@@ -1881,6 +1881,15 @@ __attribute__((inline)) void ReadBitDHT(char * c);
 void MeasureDHT(void);
 
 volatile char DatasDHT[5];
+
+
+void SendCharSIM(char c);
+
+void ReceiveCharSIM(char * c);
+
+void SendStringSIM(char c[], uint8_t size);
+
+void SyncPicSIM(void);
 # 16 "main.c" 2
 # 26 "main.c"
 void main(void)

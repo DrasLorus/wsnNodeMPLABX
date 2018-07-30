@@ -34,7 +34,10 @@
 #define SETERDHT        flags = (flags & 0xFB) + 0x4
 #define CLRERDHT        flags = flags & 0xFB
 
-#define BAUDRATE        57600
+/* SIM800L ********************************************************************/
+#define TXSIM           RC6
+#define RXSIM           RC7
+#define BAUDRATE        9600
 
 /******************************************************************************/
 /* User Function Prototypes                                                   */
@@ -71,5 +74,14 @@ inline void ReadBitDHT(char * c);
 void MeasureDHT(void);
 
 volatile char DatasDHT[5];
+
+/* SIM800L ********************************************************************/
+void SendCharSIM(char c);
+
+void ReceiveCharSIM(char * c);
+
+void SendStringSIM(char c[], uint8_t size);
+
+void SyncPicSIM(void);
 
 #endif //USER_H

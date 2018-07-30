@@ -24,7 +24,19 @@ void InitApp(void)
             
     /* Initialize peripherals */ 
     
+    TRISC = 0x80;
+    TX9   = 0;
+    TXEN  = 0;
+    SYNC  = 0;
+    BRGH  = 1;
+    SPEN  = 1;
+    CREN  = 0;
+    ADDEN = 0;
+    
+    SPBRG = 129;        /* value given by pic16f877a datasheet */
+    
     /* Enable interrupts */
+    GIE = 0;
 }
 
 /******************************************************************************/

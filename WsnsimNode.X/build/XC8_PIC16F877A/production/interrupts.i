@@ -1841,7 +1841,7 @@ typedef uint16_t uintptr_t;
 # 12 "./user.h" 2
 # 1 "./system.h" 1
 # 13 "./user.h" 2
-# 43 "./user.h"
+# 46 "./user.h"
 void InitApp(void);
 
 volatile char flags;
@@ -1873,6 +1873,15 @@ __attribute__((inline)) void ReadBitDHT(char * c);
 void MeasureDHT(void);
 
 volatile char DatasDHT[5];
+
+
+void SendCharSIM(char c);
+
+void ReceiveCharSIM(char * c);
+
+void SendStringSIM(char c[], uint8_t size);
+
+void SyncPicSIM(void);
 # 9 "interrupts.c" 2
 # 18 "interrupts.c"
 void __attribute__((picinterrupt(""))) isr(void)
