@@ -28,6 +28,12 @@
 #define SETEROI         flags = (flags & 0xFD) + 0x2
 #define CLREROI         flags = flags & 0xFD
 
+/* DHT11 **********************************************************************/
+#define OUTDHT          RB0
+#define ERDHT           (flags & 0x04 == 0x04)
+#define SETERDHT        flags = (flags & 0xFB) + 0x4
+#define CLRERDHT        flags = flags & 0xFB
+
 #define BAUDRATE        57600
 
 /******************************************************************************/
@@ -60,11 +66,10 @@ void MeasureDS(void);
 volatile char temperatureDS[2];
 
 /* DHT11 **********************************************************************/
-void StartSeqDHT(void);
-char ReadBitDHT(void);
-void ReadFullDHT(void);
+inline void StartSeqDHT(void);
+inline void ReadBitDHT(char * c);
 void MeasureDHT(void);
 
-volatile char temperatureDHT[5];
+volatile char DatasDHT[5];
 
 #endif //USER_H

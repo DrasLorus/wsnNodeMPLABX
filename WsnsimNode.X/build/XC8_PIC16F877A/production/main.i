@@ -1849,7 +1849,7 @@ typedef uint16_t uintptr_t;
 # 11 "./user.h" 2
 # 1 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdbool.h" 1 3
 # 12 "./user.h" 2
-# 37 "./user.h"
+# 43 "./user.h"
 void InitApp(void);
 
 volatile char flags;
@@ -1876,7 +1876,11 @@ void MeasureDS(void);
 volatile char temperatureDS[2];
 
 
-void StartSeqDHT(void);
+__attribute__((inline)) void StartSeqDHT(void);
+__attribute__((inline)) void ReadBitDHT(char * c);
+void MeasureDHT(void);
+
+volatile char DatasDHT[5];
 # 16 "main.c" 2
 # 26 "main.c"
 void main(void)
@@ -1892,6 +1896,7 @@ void main(void)
     {
         MeasureHY();
         MeasureDS();
+        MeasureDHT();
         __asm("SLEEP");
     }
 

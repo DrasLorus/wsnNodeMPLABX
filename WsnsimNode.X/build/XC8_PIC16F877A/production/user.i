@@ -1847,7 +1847,7 @@ typedef uint16_t uintptr_t;
 # 12 "./user.h" 2
 # 1 "./system.h" 1
 # 13 "./user.h" 2
-# 37 "./user.h"
+# 43 "./user.h"
 void InitApp(void);
 
 volatile char flags;
@@ -1874,7 +1874,11 @@ void MeasureDS(void);
 volatile char temperatureDS[2];
 
 
-void StartSeqDHT(void);
+__attribute__((inline)) void StartSeqDHT(void);
+__attribute__((inline)) void ReadBitDHT(char * c);
+void MeasureDHT(void);
+
+volatile char DatasDHT[5];
 # 13 "user.c" 2
 
 void InitApp(void)
@@ -1940,24 +1944,20 @@ __attribute__((inline)) void DriveLowDS(){
 }
 
 __attribute__((inline)) void WaitTMR2IFDS(){
+    TMR2 =0;
     TMR2ON = 1;
     while(!TMR2IF);
     TMR2ON = 0;
-    TMR2 = 0;
     TMR2IF = 0;
 }
 
 void TMR2Config480us(){
-    TMR2ON = 0;
     T2CON = 0x02;
-    TMR2 = 0;
     PR2 = 150;
 }
 
 void TMR2Config10us(){
-    TMR2ON = 0;
     T2CON = 0x00;
-    TMR2 = 0;
     PR2 = 50;
 }
 
@@ -1978,6 +1978,7 @@ void InitializationSeqDS(){
     _delay((unsigned long)((480)*(20000000/4000000.0)));
     ReleaseDS();
 
+    TMR2 = 0;
     TMR2ON = 1;
     if(!RB2){
         _delay((unsigned long)((1)*(20000000/4000000.0)));
@@ -2043,8 +2044,8 @@ void ReadTemperatureDS(){
     SendInstructionDS(0xBE);
     int i;
     for ( i = 0 ; i < 16 ; i++){
-        temperatureDS[(i>>3)] <<= 1;
-        temperatureDS[(i>>3)] += ReadDS();
+        temperatureDS[(i>>3)] >>= 1;
+        temperatureDS[(i>>3)] += (ReadDS() << 7);
     }
     ResetDS();
 }
@@ -2075,4 +2076,84 @@ void MeasureDS(){
     InitializationSeqDS();
     SkipRom();
     ReadTemperatureDS();
+}
+
+
+
+
+__attribute__((inline)) void DriveLowDHT(){
+    TRISB = 0x00;
+    RB0 = 0;
+}
+
+__attribute__((inline)) void ReleaseDHT(){
+    TRISB = 0x01;
+}
+
+__attribute__((inline)) void TMR2Config40us(void){
+    T2CON = 0x00;
+    PR2 = 200;
+}
+
+
+
+
+
+
+__attribute__((inline)) void TMR1Config18ms(void){
+    T1CON = 0x30;
+}
+
+__attribute__((inline)) void WaitFor18msTMR1(void){
+    TMR1 = 0;
+    unsigned long int l = 0;
+    TMR1ON = 1;
+    while(l<171664){
+        TMR1IF = 0;
+        while(!TMR1IF)
+            ;
+        l++;
+    }
+    TMR1ON = 0;
+    TMR1IF = 0;
+}
+
+__attribute__((inline)) void StartSeqDHT(){
+    TMR1Config18ms();
+    TMR2Config40us();
+    DriveLowDHT();
+    WaitFor18msTMR1();
+    ReleaseDHT();
+    while(RB0)
+        ;
+    while(!RB0)
+        ;
+    while(RB0)
+        ;
+}
+
+__attribute__((inline)) void ReadBitDHT(char * c){
+    TMR2 = 0;
+    TMR2IF = 0;
+    while(!RB0)
+        ;
+    TMR2ON = 1;
+    while(RB0)
+        ;
+    TMR2ON = 0;
+    *c = TMR2IF;
+    TMR2IF = 0;
+}
+
+void MeasureDHT(void){
+    char buff;
+    uint8_t i = 40;
+    StartSeqDHT();
+    while(i){
+        ReadBitDHT(&buff);
+        DatasDHT[(i-1)>>3] <<= 1;
+        DatasDHT[(i-1)>>3] += buff;
+        i--;
+    }
+# 298 "user.c"
 }

@@ -74,25 +74,21 @@ inline void DriveLowDS(){
 }
 
 inline void WaitTMR2IFDS(){
+    TMR2 =0;
     TMR2ON = 1;
     while(!TMR2IF);
     TMR2ON = 0;
-    TMR2  = 0;
     TMR2IF = 0;
 }
 
 void TMR2Config480us(){
-    TMR2ON = 0;
-    T2CON = 0x02;
-    TMR2  = 0;
-    PR2   = 150;        /* 150 x 16 x (1/20)E-6 = 480E-6 */
+    T2CON = 0x02;       // '00000010'
+    PR2   = 150;        // 150 x 16 x (1/5)E-6 = 480E-6 
 }
 
 void TMR2Config10us(){
-    TMR2ON = 0;
-    T2CON = 0x00;
-    TMR2  = 0;
-    PR2   = 50;        /* 50 x (1/20)E-6 = 10E-6 */
+    T2CON = 0x00;       // '00000000'
+    PR2   = 50;         // 50 x (1/5)E-6 = 10E-6 
 }
 
 void ResetDS(){
@@ -112,6 +108,7 @@ void InitializationSeqDS(){
     __delay_us(480);
     ReleaseDS();
     
+    TMR2 = 0;
     TMR2ON = 1;
     if(!OUTDS){
         __delay_us(1);
@@ -177,7 +174,7 @@ void ReadTemperatureDS(){
     SendInstructionDS(READSCRATCHPAD);
     int i;  
     for ( i = 0 ; i < 16 ; i++){            
-        temperatureDS[(i>>3)] >>= 1;
+        temperatureDS[(i>>3)] >>= 1; 
         temperatureDS[(i>>3)] += (ReadDS() << 7);
     }
     ResetDS();
@@ -214,3 +211,89 @@ void MeasureDS(){
 /******************************************************************************/
 /* DHT11 **********************************************************************/
 /******************************************************************************/
+inline void DriveLowDHT(){
+    TRISB  = 0x00;
+    OUTDHT = 0;
+}
+
+inline void ReleaseDHT(){
+    TRISB  = 0x01;
+}
+
+inline void TMR2Config40us(void){
+    T2CON = 0x00;       // '00000000'
+    PR2   = 200;        // 200 x (1/5)E-6 = 40E-6 
+}
+
+/* inline void TMR2Config90us(void){
+    T2CON = 0x08;       // '00001000'
+    PR2   = 225;        // 225 x 2 x (1/5)E-6 = 90E-6 
+} */
+
+inline void TMR1Config18ms(void){
+    T1CON = 0x30;       // '00110000'
+}
+
+inline void WaitFor18msTMR1(void){
+    TMR1 = 0;
+    unsigned long int l = 0;
+    TMR1ON = 1;
+    while(l<171664){
+        TMR1IF = 0;
+        while(!TMR1IF)
+            ;
+        l++;
+    }
+    TMR1ON = 0;
+    TMR1IF = 0;
+}
+
+inline void StartSeqDHT(){
+    TMR1Config18ms();
+    TMR2Config40us();
+    DriveLowDHT();
+    WaitFor18msTMR1();
+    ReleaseDHT();
+    while(OUTDHT)
+        ;
+    while(!OUTDHT)
+        ;
+    while(OUTDHT)
+        ;
+}
+
+inline void ReadBitDHT(char * c){
+    TMR2 = 0;
+    TMR2IF = 0;
+    while(!OUTDHT)
+        ;
+    TMR2ON = 1;
+    while(OUTDHT)
+        ;
+    TMR2ON = 0;
+    *c = TMR2IF;
+    TMR2IF = 0;
+}
+
+void MeasureDHT(void){
+    char buff;
+    uint8_t i = 40;
+    StartSeqDHT();
+    while(i){
+        ReadBitDHT(&buff);
+        DatasDHT[(i-1)>>3] <<= 1;
+        DatasDHT[(i-1)>>3] += buff;
+        i--;
+    }
+    
+    // Checksum
+    /*  int check = DatasDHT[4] + DatasDHT[3] + DatasDHT[2] + DatasDHT[1];
+     *  check &= 0x00FF;
+     *  if(check != DatasDHT[0]){
+     *      SETERDHT;
+     *  }else{
+     *      CLRERDHT;
+     *  }
+     */
+}
+

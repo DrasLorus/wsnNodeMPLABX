@@ -1841,7 +1841,7 @@ typedef uint16_t uintptr_t;
 # 12 "./user.h" 2
 # 1 "./system.h" 1
 # 13 "./user.h" 2
-# 37 "./user.h"
+# 43 "./user.h"
 void InitApp(void);
 
 volatile char flags;
@@ -1868,7 +1868,11 @@ void MeasureDS(void);
 volatile char temperatureDS[2];
 
 
-void StartSeqDHT(void);
+__attribute__((inline)) void StartSeqDHT(void);
+__attribute__((inline)) void ReadBitDHT(char * c);
+void MeasureDHT(void);
+
+volatile char DatasDHT[5];
 # 9 "interrupts.c" 2
 # 18 "interrupts.c"
 void __attribute__((picinterrupt(""))) isr(void)

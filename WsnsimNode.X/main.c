@@ -36,6 +36,7 @@ void main(void)
     {
         MeasureHY();
         MeasureDS();
+        MeasureDHT();
         asm("SLEEP");
     }
 
