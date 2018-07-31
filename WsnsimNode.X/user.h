@@ -15,8 +15,8 @@
 #define ECHO            RE1
 #define TRIG            RE0
 #define SOUNDSPEED      340
-#define SETOOR          flags = (flags & 0xFE) + 0x1
 #define OOR             (flags & 0x01 == 0x01)  /* Out Of Range Flag*/
+#define SETOOR          flags = (flags & 0xFE) + 0x1
 #define CLROOR          flags = flags & 0xFE
 
 /* DS18B20 ********************************************************************/
@@ -24,19 +24,23 @@
 #define SKIPROM         0xCC
 #define CONVERTT        0x44
 #define READSCRATCHPAD  0xBE
-#define EROI            (flags & 0x02 == 0x02)
+#define EROI            (flags & 0x02 == 0x02)  /* ERror Of Initialization */
 #define SETEROI         flags = (flags & 0xFD) + 0x2
 #define CLREROI         flags = flags & 0xFD
 
 /* DHT11 **********************************************************************/
 #define OUTDHT          RB0
-#define ERDHT           (flags & 0x04 == 0x04)
+#define ERDHT           (flags & 0x04 == 0x04)  /* ERror DHT */
 #define SETERDHT        flags = (flags & 0xFB) + 0x4
 #define CLRERDHT        flags = flags & 0xFB
 
 /* SIM800L ********************************************************************/
 #define TXSIM           RC6
 #define RXSIM           RC7
+#define CRCD            (flags & 0x08 == 0x08)  /* Character ReCeiveD */
+#define SETCRCD         flags = (flags & 0xF7) + 0x08
+#define CLRCRCD         flags = flags & 0xF7
+#define STRSIZE         16
 #define BAUDRATE        9600
 
 /******************************************************************************/
@@ -93,8 +97,14 @@ void SendCharSIM(char c);
 
 void ReceiveCharSIM(char * c);
 
+void ReceiveStringSIM(char c[]);
+
 void SendStringSIM(char c[], uint8_t size);
 
 void SyncPicSIM(void);
+
+volatile char bufferSIM;
+
+volatile char stringSIM[STRSIZE];
 
 #endif //USER_H

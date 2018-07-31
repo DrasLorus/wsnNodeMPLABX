@@ -317,7 +317,7 @@ void SendCharSIM(char c){
 }
 
 void ReceiveCharSIM(char * c){
-    
+    *c = RCREG;
 }
 
 void SendStringSIM(char c[], uint8_t size){
@@ -326,8 +326,18 @@ void SendStringSIM(char c[], uint8_t size){
     }
 }
 
+void ReceiveStringSIM(char c[]){
+    uint8_t size = 0;
+    while((size < (STRSIZE-1) && CRCD)){
+        c[size++] = bufferSIM;
+    }  
+    // need flag for oversized?
+}
+
 void SyncPicSIM(void){
-    
+    SendStringSIM("AT", 2);
+    while(!CRCD)
+        ;
 }
 
 

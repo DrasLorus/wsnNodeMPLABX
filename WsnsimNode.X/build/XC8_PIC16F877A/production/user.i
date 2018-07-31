@@ -1847,35 +1847,48 @@ typedef uint16_t uintptr_t;
 # 12 "./user.h" 2
 # 1 "./system.h" 1
 # 13 "./user.h" 2
-# 46 "./user.h"
+# 49 "./user.h"
 void InitApp(void);
 
 volatile char flags;
 
 
 void TriggerHY(void);
+
 int EchoDuration(void);
+
 double CalcDistance(int time);
+
 void MeasureHY(void);
 
 volatile double distance_cm;
 
 
 void InitializationSeqDS(void);
+
 void Write1DS(void);
+
 void Write0DS(void);
+
 void SendInstructionDS(char c);
+
 void SkipRom(void);
+
 void ConvertT(void);
+
 void ReadTemperature(void);
+
 char ReadDS(void);
+
 void MeasureDS(void);
 
 volatile char temperatureDS[2];
 
 
 __attribute__((inline)) void StartSeqDHT(void);
+
 __attribute__((inline)) void ReadBitDHT(char * c);
+
 void MeasureDHT(void);
 
 volatile char DatasDHT[5];
@@ -1888,6 +1901,10 @@ void ReceiveCharSIM(char * c);
 void SendStringSIM(char c[], uint8_t size);
 
 void SyncPicSIM(void);
+
+volatile char bufferSIM;
+
+volatile char stringSIM[16];
 # 13 "user.c" 2
 
 void InitApp(void)
@@ -1915,7 +1932,10 @@ void InitApp(void)
     SPBRG = 129;
 
 
-    GIE = 0;
+    GIE = 1;
+    PEIE = 1;
+    RCIE = 1;
+
 }
 
 
@@ -2116,11 +2136,6 @@ __attribute__((inline)) void TMR2Config40us(void){
     PR2 = 200;
 }
 
-
-
-
-
-
 __attribute__((inline)) void TMR1Config18ms(void){
     T1CON = 0x30;
 }
@@ -2176,5 +2191,28 @@ void MeasureDHT(void){
         DatasDHT[(i-1)>>3] += buff;
         i--;
     }
-# 310 "user.c"
+# 308 "user.c"
+}
+
+
+
+
+void SendCharSIM(char c){
+    while(!TXIF)
+        ;
+    TXREG = c;
+}
+
+void ReceiveCharSIM(char * c){
+    *c = RCREG;
+}
+
+void SendStringSIM(char c[], uint8_t size){
+    while(size > 0){
+        SendCharSIM(c[(--size)]);
+    }
+}
+
+void SyncPicSIM(void){
+
 }

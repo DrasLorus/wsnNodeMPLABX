@@ -1841,35 +1841,48 @@ typedef uint16_t uintptr_t;
 # 12 "./user.h" 2
 # 1 "./system.h" 1
 # 13 "./user.h" 2
-# 46 "./user.h"
+# 49 "./user.h"
 void InitApp(void);
 
 volatile char flags;
 
 
 void TriggerHY(void);
+
 int EchoDuration(void);
+
 double CalcDistance(int time);
+
 void MeasureHY(void);
 
 volatile double distance_cm;
 
 
 void InitializationSeqDS(void);
+
 void Write1DS(void);
+
 void Write0DS(void);
+
 void SendInstructionDS(char c);
+
 void SkipRom(void);
+
 void ConvertT(void);
+
 void ReadTemperature(void);
+
 char ReadDS(void);
+
 void MeasureDS(void);
 
 volatile char temperatureDS[2];
 
 
 __attribute__((inline)) void StartSeqDHT(void);
+
 __attribute__((inline)) void ReadBitDHT(char * c);
+
 void MeasureDHT(void);
 
 volatile char DatasDHT[5];
@@ -1882,6 +1895,10 @@ void ReceiveCharSIM(char * c);
 void SendStringSIM(char c[], uint8_t size);
 
 void SyncPicSIM(void);
+
+volatile char bufferSIM;
+
+volatile char stringSIM[16];
 # 9 "interrupts.c" 2
 # 18 "interrupts.c"
 void __attribute__((picinterrupt(""))) isr(void)
@@ -1898,10 +1915,11 @@ void __attribute__((picinterrupt(""))) isr(void)
         flags = (flags & 0xFE) + 0x1;
         TMR1IF=0;
     }
-
-
-
-
+    else if (RCIF)
+    {
+        ReceiveCharSIM(&bufferSIM);
+        flags = (flags & 0xF7) + 0x08;
+    }
     else
     {
 

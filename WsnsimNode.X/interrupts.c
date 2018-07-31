@@ -29,10 +29,11 @@ void __interrupt() isr(void)
         SETOOR;
         TMR1IF=0; /* Clear Interrupt Flag */
     }
-    /*else if (<Interrupt Flag 2>)
+    else if (RCIF)
     {
-        <Interrupt Flag 2=0>; 
-    }*/
+        ReceiveCharSIM(&bufferSIM);
+        SETCRCD;
+    }
     else
     {
         /* Unhandled interrupts */
