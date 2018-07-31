@@ -49,28 +49,41 @@ volatile char flags;
 
 /* HY-SRF05 *******************************************************************/
 void TriggerHY(void);                   /* Launch a measure */
+
 int EchoDuration(void);                 /* Return the raw duration of the echo */
+
 double CalcDistance(int time);          /* Return the distance in cm */
+
 void MeasureHY(void);                   /* Launch the HY measurement routine */
 
 volatile double distance_cm;
 
 /* DS18B20 ********************************************************************/
 void InitializationSeqDS(void);
+
 void Write1DS(void);
+
 void Write0DS(void);
+
 void SendInstructionDS(char c);
+
 void SkipRom(void);
+
 void ConvertT(void);
+
 void ReadTemperature(void);
+
 char ReadDS(void);
+
 void MeasureDS(void);
 
 volatile char temperatureDS[2];
 
 /* DHT11 **********************************************************************/
 inline void StartSeqDHT(void);
+
 inline void ReadBitDHT(char * c);
+
 void MeasureDHT(void);
 
 volatile char DatasDHT[5];

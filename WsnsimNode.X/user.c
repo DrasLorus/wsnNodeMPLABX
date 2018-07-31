@@ -36,7 +36,10 @@ void InitApp(void)
     SPBRG = 129;        /* value given by pic16f877a datasheet */
     
     /* Enable interrupts */
-    GIE = 0;
+    GIE = 1;
+    PEIE = 1;
+    RCIE = 1;
+    
 }
 
 /******************************************************************************/
@@ -237,11 +240,6 @@ inline void TMR2Config40us(void){
     PR2   = 200;        // 200 x (1/5)E-6 = 40E-6 
 }
 
-/* inline void TMR2Config90us(void){
-    T2CON = 0x08;       // '00001000'
-    PR2   = 225;        // 225 x 2 x (1/5)E-6 = 90E-6 
-} */
-
 inline void TMR1Config18ms(void){
     T1CON = 0x30;       // '00110000'
 }
@@ -308,4 +306,28 @@ void MeasureDHT(void){
      *  }
      */
 }
+
+/******************************************************************************/
+/* SIM800L ********************************************************************/
+/******************************************************************************/
+void SendCharSIM(char c){
+    while(!TXIF)
+        ;
+    TXREG = c;
+}
+
+void ReceiveCharSIM(char * c){
+    
+}
+
+void SendStringSIM(char c[], uint8_t size){
+    while(size > 0){
+        SendCharSIM(c[(--size)]);
+    }
+}
+
+void SyncPicSIM(void){
+    
+}
+
 
