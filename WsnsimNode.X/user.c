@@ -33,7 +33,7 @@ void InitApp(void)
     CREN  = 0;
     ADDEN = 0;
     
-    SPBRG = 129;        /* value given by pic16f877a datasheet */
+    SPBRG = 129;        /* value given by pic16f877a datasheet for 9600bd */
     
     /* Enable interrupts */
     GIE = 1;
@@ -41,42 +41,43 @@ void InitApp(void)
     RCIE = 1;
     
     /* Clear all flags */
-    CLROOR;
-    CLREROI;
-    CLRERDHT;
-    CLRCRCD;
-    
+    flags = 0;  
 }
 
 void ResetFifo(fifo * f){
     f->ir = 0;
     f->iw = 0;
+    f->elts = 0;
 }
 
 uint8_t ReadFifo(fifo * f, char * c){
-    if(f->ir == f->iw){
+    if(f->elts == 0){
         return 0;
     }else{
         *c = f->str[f->ir];
-        if(f->ir >= (FIFOSIZE - 1)){
+        f->elts--;
+        if(f->ir > (FIFOSIZE - 2)){
             f->ir = 0;
         }else{
             f->ir += 1;
         }
+        CLRFF;
         return 1;
     }
 }
 
 uint8_t WriteFifo(fifo * f, char c){
-    if(((f->ir + 1) == f->iw) || ((f->ir - (FIFOSIZE - 1)) == f->iw)){
+    if(f->elts == FIFOSIZE){
         return 0;
     }else{ 
         f->str[f->iw] = c;
-        if(f->iw > FIFOSIZE-1){
+        f->elts++;
+        if(f->iw > FIFOSIZE - 2){
             f->iw = 0;
         }else{
             f->iw += 1;
         }
+        CLRFE;
         return 1;
     }
 }
@@ -355,10 +356,10 @@ void SendCharSIM(char c){
     TXREG = c;
 }
 
-void SendStringSIM(char c[]){
+void SendStringSIM(char * s){
     uint8_t i = 0;
-    while(c[i] != 0){
-        SendCharSIM(c[(i)]);
+    while(*(s + i) != 0){
+        SendCharSIM((s + i));
         i++;
     }
 }
@@ -368,9 +369,31 @@ void ReceiveCharSIM(fifo * f){
         SETFF;
 }
 
-uint8_t ReceiveStringSIM(fifo * f, uint8_t size){
-    if(size > FIFOSIZE){
+uint8_t ReceiveStringSIM(fifo * f, char s[], uint8_t size){
+    if((size > FIFOSIZE) || FE || (f->elts < size)){
         return 0;
     }
+    uint8_t i = 0;
+    while(i < size){
+        if(!ReadFifo( f, (s+i))){
+                SETFE;
+                break;
+        }       
+        i++;
+    }
+    s[size] = '\0';
+    return 1;
 }
 
+void SendCommandSIM(char * command){
+    *command = 0;
+}
+
+uint8_t SyncPicSIM(void){
+    SendStringSIM("AT");
+    SendCharSIM("\r");
+    //TODO
+        while(FE)
+            ;
+    
+}

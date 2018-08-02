@@ -1845,9 +1845,10 @@ typedef uint16_t uintptr_t;
 # 11 "./user.h" 2
 # 1 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdbool.h" 1 3
 # 12 "./user.h" 2
+
 # 1 "./system.h" 1
-# 13 "./user.h" 2
-# 54 "./user.h"
+# 14 "./user.h" 2
+# 58 "./user.h"
 void InitApp(void);
 
 struct flag_struct{
@@ -1856,6 +1857,7 @@ struct flag_struct{
     uint8_t erdht:1;
     uint8_t crcd:1;
     uint8_t ff:1;
+    uint8_t fe:1;
 } flags;
 
 typedef struct FIFO {
@@ -1923,7 +1925,7 @@ void SendStringSIM(char c[]);
 
 void ReceiveCharSIM(fifo * f);
 
-void ReceiveStringSIM(fifo * f, uint8_t size);
+uint8_t ReceiveStringSIM(fifo * f, char s[], uint8_t size);
 # 13 "user.c" 2
 
 void InitApp(void)
@@ -1978,6 +1980,7 @@ uint8_t ReadFifo(fifo * f, char * c){
         }else{
             f->ir += 1;
         }
+        flags.ff = 0;
         return 1;
     }
 }
@@ -1992,6 +1995,7 @@ uint8_t WriteFifo(fifo * f, char c){
         }else{
             f->iw += 1;
         }
+        flags.fe = 0;
         return 1;
     }
 }
@@ -2249,7 +2253,7 @@ void MeasureDHT(void){
         DatasDHT[(i-1)>>3] += buff;
         i--;
     }
-# 347 "user.c"
+# 349 "user.c"
 }
 
 
@@ -2274,4 +2278,18 @@ void ReceiveCharSIM(fifo * f){
         flags.ff = 1;
 }
 
-void ReceiveStringSIM(fifo * f, uint8_t size);
+uint8_t ReceiveStringSIM(fifo * f, char s[], uint8_t size){
+    if(size > 32){
+        return 0;
+    }
+    uint8_t i = 0;
+    while(i < size){
+        if(!ReadFifo( f, (s+i))){
+                flags.fe = 1;
+                break;
+        }
+        i++;
+    }
+    s[size] = '\0';
+    return 1;
+}

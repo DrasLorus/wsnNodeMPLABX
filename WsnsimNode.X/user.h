@@ -9,12 +9,15 @@
 
 #include <stdint.h>         /* For uint8_t definition */
 #include <stdbool.h>  
-#include <stdlib.h>
+
 #include "system.h"
 
 #define FF              (flags.ff)             // Fifo Full flag
 #define SETFF           flags.ff = 1
 #define CLRFF           flags.ff = 0
+#define FE              (flags.fe)             // Fifo Empty flag
+#define SETFE           flags.fe = 1
+#define CLRFE           flags.fe = 0
 
 /* HY-SRF05 *******************************************************************/
 #define ECHO            RE1
@@ -42,9 +45,6 @@
 /* SIM800L ********************************************************************/
 #define TXSIM           RC6
 #define RXSIM           RC7
-#define CRCD            (flags.crcd)            // Character ReCeiveD 
-#define SETCRCD         flags.crcd = 1
-#define CLRCRCD         flags.crcd = 0
 #define FIFOSIZE        32
 #define BAUDRATE        9600
 
@@ -58,14 +58,15 @@ struct flag_struct{
     uint8_t oor:1;
     uint8_t eroi:1;
     uint8_t erdht:1;
-    uint8_t crcd:1;
     uint8_t ff:1;
+    uint8_t fe:1;
 } flags;
 
 typedef struct FIFO {
     char str[FIFOSIZE];
     uint8_t iw;
     uint8_t ir;
+    uint8_t elts;
 } fifo;
 
 void ResetFifo(fifo * f);
@@ -119,14 +120,12 @@ volatile uint8_t DatasDHT[5];
 
 /* SIM800L ********************************************************************/
 
-void SyncPicSIM(void);
-
-void SendCharSIM(char c);
-
-void SendStringSIM(char c[]);
+uint8_t SyncPicSIM(void);
 
 void ReceiveCharSIM(fifo * f);
 
-uint8_t ReceiveStringSIM(fifo * f, uint8_t size);
+uint8_t ReceiveStringSIM(fifo * f, char s[],  uint8_t size);
+
+void SendCommandSIM(char * command);
 
 #endif //USER_H

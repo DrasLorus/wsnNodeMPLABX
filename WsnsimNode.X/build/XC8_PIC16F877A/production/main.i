@@ -1844,9 +1844,10 @@ typedef uint16_t uintptr_t;
 # 11 "./user.h" 2
 # 1 "C:\\Program Files (x86)\\Microchip\\xc8\\v2.00\\pic\\include\\c90\\stdbool.h" 1 3
 # 12 "./user.h" 2
+
 # 1 "./system.h" 1
-# 13 "./user.h" 2
-# 54 "./user.h"
+# 14 "./user.h" 2
+# 58 "./user.h"
 void InitApp(void);
 
 struct flag_struct{
@@ -1855,6 +1856,7 @@ struct flag_struct{
     uint8_t erdht:1;
     uint8_t crcd:1;
     uint8_t ff:1;
+    uint8_t fe:1;
 } flags;
 
 typedef struct FIFO {
@@ -1922,7 +1924,7 @@ void SendStringSIM(char c[]);
 
 void ReceiveCharSIM(fifo * f);
 
-void ReceiveStringSIM(fifo * f, uint8_t size);
+uint8_t ReceiveStringSIM(fifo * f, char s[], uint8_t size);
 # 6 "main.c" 2
 # 16 "main.c"
 void main(void)

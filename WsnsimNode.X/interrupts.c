@@ -32,7 +32,6 @@ void __interrupt() isr(void)
     else if (RCIF)
     {
         ReceiveCharSIM(&bufferSIM);
-        SETCRCD;
     }
     else
     {
