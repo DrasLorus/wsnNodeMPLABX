@@ -1847,10 +1847,27 @@ typedef uint16_t uintptr_t;
 # 12 "./user.h" 2
 # 1 "./system.h" 1
 # 13 "./user.h" 2
-# 49 "./user.h"
+# 50 "./user.h"
 void InitApp(void);
 
-volatile char flags;
+struct flag_struct{
+    uint8_t oor:1;
+    uint8_t eroi:1;
+    uint8_t erdht:1;
+    uint8_t crcd:1;
+} flags;
+
+typedef struct FIFO {
+    char str[32];
+    uint8_t iw;
+    uint8_t ir;
+} fifo;
+
+void InitFifo(fifo * f);
+
+uint8_t ReadFifo(fifo * f, char * c);
+
+uint8_t WriteFifo(fifo * f, char c);
 
 
 void TriggerHY(void);
@@ -1870,7 +1887,7 @@ void Write1DS(void);
 
 void Write0DS(void);
 
-void SendInstructionDS(char c);
+void SendInstructionDS(uint8_t c);
 
 void SkipRom(void);
 
@@ -1878,33 +1895,33 @@ void ConvertT(void);
 
 void ReadTemperature(void);
 
-char ReadDS(void);
+uint8_t ReadDS(void);
 
 void MeasureDS(void);
 
-volatile char temperatureDS[2];
+volatile uint8_t temperatureDS[2];
 
 
 __attribute__((inline)) void StartSeqDHT(void);
 
-__attribute__((inline)) void ReadBitDHT(char * c);
+__attribute__((inline)) void ReadBitDHT(uint8_t * c);
 
 void MeasureDHT(void);
 
-volatile char DatasDHT[5];
+volatile uint8_t DatasDHT[5];
 
 
 void SendCharSIM(char c);
 
 void ReceiveCharSIM(char * c);
 
-void SendStringSIM(char c[], uint8_t size);
+void ReceiveStringSIM(char c[]);
+
+void SendStringSIM(char c[]);
 
 void SyncPicSIM(void);
 
 volatile char bufferSIM;
-
-volatile char stringSIM[16];
 # 13 "user.c" 2
 
 void InitApp(void)
@@ -1936,6 +1953,45 @@ void InitApp(void)
     PEIE = 1;
     RCIE = 1;
 
+
+    flags.oor = 0;
+    flags.eroi = 0;
+    flags.erdht = 0;
+    flags.crcd = 0;
+
+}
+
+void InitFifo(fifo * f){
+    f->ir = 0;
+    f->iw = 0;
+}
+
+uint8_t ReadFifo(fifo * f, char * c){
+    if(f->ir == f->iw){
+        return 0;
+    }else{
+        *c = f->str[f->ir];
+        if(f->ir >= (32 - 1)){
+            f->ir = 0;
+        }else{
+            f->ir += 1;
+        }
+        return 1;
+    }
+}
+
+uint8_t WriteFifo(fifo * f, char c){
+    if(((f->ir + 1) == f->iw) || ((f->ir - (32 - 1)) == f->iw)){
+        return 0;
+    }else{
+        f->str[f->iw] = c;
+        if(f->iw > 32 -1){
+            f->iw = 0;
+        }else{
+            f->iw += 1;
+        }
+        return 1;
+    }
 }
 
 
@@ -2026,14 +2082,14 @@ void InitializationSeqDS(){
     }
     while(RB2 && !TMR2IF);
     if(RB2){
-        flags = (flags & 0xFD) + 0x2;
+        flags.eroi = 1;
         TMR2ON = 0;
         TMR2IF = 0;
         do { ((void)0); __asm("ljmp $"); }while(0);
     }
     while(!RB2 && !TMR2IF);
     if(!RB2){
-        flags = (flags & 0xFD) + 0x2;
+        flags.eroi = 1;
         TMR2ON = 0;
         TMR2IF = 0;
         do { ((void)0); __asm("ljmp $"); }while(0);
@@ -2057,8 +2113,8 @@ void Write0DS(){
     _delay((unsigned long)((5)*(20000000/4000000.0)));
 }
 
-void SendInstructionDS(char c){
-    char i;
+void SendInstructionDS(uint8_t c){
+    uint8_t i;
     for( i = 0 ; i < 8 ; i++){
         if((c & 0x01)){
             Write1DS();
@@ -2083,7 +2139,7 @@ void ConvertT(){
 
 void ReadTemperatureDS(){
     SendInstructionDS(0xBE);
-    int i;
+    uint8_t i;
     for ( i = 0 ; i < 16 ; i++){
         temperatureDS[(i>>3)] >>= 1;
         temperatureDS[(i>>3)] += (ReadDS() << 7);
@@ -2092,9 +2148,9 @@ void ReadTemperatureDS(){
 }
 
 
-char ReadDS(){
+uint8_t ReadDS(){
     TMR2Config10us();
-    char c = 0;
+    uint8_t c = 0;
 
     DriveLowDS();
     _delay((unsigned long)((1)*(20000000/4000000.0)));
@@ -2168,7 +2224,7 @@ __attribute__((inline)) void StartSeqDHT(){
         ;
 }
 
-__attribute__((inline)) void ReadBitDHT(char * c){
+__attribute__((inline)) void ReadBitDHT(uint8_t * c){
     TMR2 = 0;
     TMR2IF = 0;
     while(!RB0)
@@ -2182,7 +2238,7 @@ __attribute__((inline)) void ReadBitDHT(char * c){
 }
 
 void MeasureDHT(void){
-    char buff;
+    uint8_t buff;
     uint8_t i = 40;
     StartSeqDHT();
     while(i){
@@ -2191,7 +2247,7 @@ void MeasureDHT(void){
         DatasDHT[(i-1)>>3] += buff;
         i--;
     }
-# 308 "user.c"
+# 347 "user.c"
 }
 
 
@@ -2207,12 +2263,27 @@ void ReceiveCharSIM(char * c){
     *c = RCREG;
 }
 
-void SendStringSIM(char c[], uint8_t size){
-    while(size > 0){
-        SendCharSIM(c[(--size)]);
+void SendStringSIM(char c[]){
+    uint8_t i = 0;
+    while(c[i] != 0){
+        SendCharSIM(c[(i)]);
+        i++;
     }
 }
 
+void ReceiveStringSIM(char c[]){
+
+
+
+
+
+
+}
+
 void SyncPicSIM(void){
+
+
+
+
 
 }

@@ -1,16 +1,33 @@
 Version 4.0 HI-TECH Software Intermediate Code
+"52 ./user.h
+[; ;./user.h: 52: struct flag_struct{
+[s S95 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S95 flag_struct oor eroi erdht crcd ]
 [p mainexit ]
-"49 ./user.h
-[; ;./user.h: 49: void InitApp(void);
+"50
+[; ;./user.h: 50: void InitApp(void);
 [v _InitApp `(v ~T0 @X0 0 ef ]
-"60
-[; ;./user.h: 60: void MeasureHY(void);
+"59
+[; ;./user.h: 59: typedef struct FIFO {
+[s S96 `uc -> 32 `i `uc 1 `uc 1 ]
+[n S96 FIFO str iw ir ]
+"65
+[; ;./user.h: 65: void InitFifo(fifo * f);
+[v _InitFifo `(v ~T0 @X0 0 ef1`*S96 ]
+"67
+[; ;./user.h: 67: uint8_t ReadFifo(fifo * f, char * c);
+[v _ReadFifo `(uc ~T0 @X0 0 ef2`*S96`*uc ]
+"69
+[; ;./user.h: 69: uint8_t WriteFifo(fifo * f, char c);
+[v _WriteFifo `(uc ~T0 @X0 0 ef2`*S96`uc ]
+"78
+[; ;./user.h: 78: void MeasureHY(void);
 [v _MeasureHY `(v ~T0 @X0 0 ef ]
-"81
-[; ;./user.h: 81: void MeasureDS(void);
+"99
+[; ;./user.h: 99: void MeasureDS(void);
 [v _MeasureDS `(v ~T0 @X0 0 ef ]
-"90
-[; ;./user.h: 90: void MeasureDHT(void);
+"108
+[; ;./user.h: 108: void MeasureDHT(void);
 [v _MeasureDHT `(v ~T0 @X0 0 ef ]
 "54 C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 54: __asm("INDF equ 00h");
@@ -192,61 +209,76 @@ Version 4.0 HI-TECH Software Intermediate Code
 "2363
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 2363: __asm("EECON2 equ 018Dh");
 [; <" EECON2 equ 018Dh ;# ">
-"51 ./user.h
-[; ;./user.h: 51: volatile char flags;
-[v _flags `Vuc ~T0 @X0 1 e ]
-"62
-[; ;./user.h: 62: volatile double distance_cm;
+"57 ./user.h
+[; ;./user.h: 57: } flags;
+[v _flags `S95 ~T0 @X0 1 e ]
+"80
+[; ;./user.h: 80: volatile double distance_cm;
 [v _distance_cm `Vd ~T0 @X0 1 e ]
-"83
-[; ;./user.h: 83: volatile char temperatureDS[2];
+"101
+[; ;./user.h: 101: volatile uint8_t temperatureDS[2];
 [v _temperatureDS `Vuc ~T0 @X0 -> 2 `i e ]
-"92
-[; ;./user.h: 92: volatile char DatasDHT[5];
+"110
+[; ;./user.h: 110: volatile uint8_t DatasDHT[5];
 [v _DatasDHT `Vuc ~T0 @X0 -> 5 `i e ]
-"103
-[; ;./user.h: 103: volatile char bufferSIM;
+"123
+[; ;./user.h: 123: volatile char bufferSIM;
 [v _bufferSIM `Vuc ~T0 @X0 1 e ]
-"105
-[; ;./user.h: 105: volatile char stringSIM[16];
-[v _stringSIM `Vuc ~T0 @X0 -> 16 `i e ]
 [v $root$_main `(v ~T0 @X0 0 e ]
-"26 main.c
-[; ;main.c: 26: void main(void)
+"16 main.c
+[; ;main.c: 16: void main(void)
 [v _main `(v ~T0 @X0 1 ef ]
-"27
-[; ;main.c: 27: {
+"17
+[; ;main.c: 17: {
 {
 [e :U _main ]
 [f ]
-"32
-[; ;main.c: 32:     InitApp();
+"22
+[; ;main.c: 22:     InitApp();
 [e ( _InitApp ..  ]
-"35
-[; ;main.c: 35:     while(1)
-[e :U 97 ]
-"36
-[; ;main.c: 36:     {
+"24
+[; ;main.c: 24:     fifo bufferSIM;
+[v _bufferSIM `S96 ~T0 @X0 1 a ]
+"25
+[; ;main.c: 25:     char buff;
+[v _buff `uc ~T0 @X0 1 a ]
+"26
+[; ;main.c: 26:     uint8_t test;
+[v _test `uc ~T0 @X0 1 a ]
+"28
+[; ;main.c: 28:     InitFifo(&bufferSIM);
+[e ( _InitFifo (1 &U _bufferSIM ]
+"29
+[; ;main.c: 29:     test = ReadFifo(&bufferSIM, &buff);
+[e = _test ( _ReadFifo (2 , &U _bufferSIM &U _buff ]
+"30
+[; ;main.c: 30:     test = WriteFifo(&bufferSIM, 'A');
+[e = _test ( _WriteFifo (2 , &U _bufferSIM -> -> 65 `ui `uc ]
+"31
+[; ;main.c: 31:     while(1)
+[e :U 99 ]
+"32
+[; ;main.c: 32:     {
 {
-"37
-[; ;main.c: 37:         MeasureHY();
+"33
+[; ;main.c: 33:         MeasureHY();
 [e ( _MeasureHY ..  ]
-"38
-[; ;main.c: 38:         MeasureDS();
+"34
+[; ;main.c: 34:         MeasureDS();
 [e ( _MeasureDS ..  ]
-"39
-[; ;main.c: 39:         MeasureDHT();
+"35
+[; ;main.c: 35:         MeasureDHT();
 [e ( _MeasureDHT ..  ]
-"40
-[; ;main.c: 40:         __asm("SLEEP");
+"36
+[; ;main.c: 36:         __asm("SLEEP");
 [; <" SLEEP ;# ">
-"41
-[; ;main.c: 41:     }
+"37
+[; ;main.c: 37:     }
 }
-[e :U 96 ]
-[e $U 97  ]
 [e :U 98 ]
-"43
-[; ;main.c: 43: }
-[e :UE 95 ]
+[e $U 99  ]
+[e :U 100 ]
+"39
+[; ;main.c: 39: }
+[e :UE 97 ]
 }

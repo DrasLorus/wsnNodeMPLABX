@@ -40,6 +40,45 @@ void InitApp(void)
     PEIE = 1;
     RCIE = 1;
     
+    /* Clear all flags */
+    CLROOR;
+    CLREROI;
+    CLRERDHT;
+    CLRCRCD;
+    
+}
+
+void InitFifo(fifo * f){
+    f->ir = 0;
+    f->iw = 0;
+}
+
+uint8_t ReadFifo(fifo * f, char * c){
+    if(f->ir == f->iw){
+        return 0;
+    }else{
+        *c = f->str[f->ir];
+        if(f->ir >= (FIFOSIZE - 1)){
+            f->ir = 0;
+        }else{
+            f->ir += 1;
+        }
+        return 1;
+    }
+}
+
+uint8_t WriteFifo(fifo * f, char c){
+    if(((f->ir + 1) == f->iw) || ((f->ir - (FIFOSIZE - 1)) == f->iw)){
+        return 0;
+    }else{ 
+        f->str[f->iw] = c;
+        if(f->iw > FIFOSIZE-1){
+            f->iw = 0;
+        }else{
+            f->iw += 1;
+        }
+        return 1;
+    }
 }
 
 /******************************************************************************/
@@ -161,8 +200,8 @@ void Write0DS(){
     __delay_us(5);
 }
 
-void SendInstructionDS(char c){
-    char i;
+void SendInstructionDS(uint8_t c){
+    uint8_t i;
     for( i = 0 ; i < 8 ; i++){
         if((c & 0x01)){
             Write1DS();
@@ -187,7 +226,7 @@ void ConvertT(){
 
 void ReadTemperatureDS(){
     SendInstructionDS(READSCRATCHPAD);
-    int i;  
+    uint8_t i;  
     for ( i = 0 ; i < 16 ; i++){            
         temperatureDS[(i>>3)] >>= 1; 
         temperatureDS[(i>>3)] += (ReadDS() << 7);
@@ -196,9 +235,9 @@ void ReadTemperatureDS(){
 }
 
 
-char ReadDS(){
+uint8_t ReadDS(){
     TMR2Config10us();
-    char c = 0;
+    uint8_t c = 0;
     
     DriveLowDS();
     __delay_us(1);
@@ -272,7 +311,7 @@ inline void StartSeqDHT(){
         ;
 }
 
-inline void ReadBitDHT(char * c){
+inline void ReadBitDHT(uint8_t * c){
     TMR2 = 0;
     TMR2IF = 0;
     while(!OUTDHT)
@@ -286,7 +325,7 @@ inline void ReadBitDHT(char * c){
 }
 
 void MeasureDHT(void){
-    char buff;
+    uint8_t buff;
     uint8_t i = 40;
     StartSeqDHT();
     while(i){
@@ -297,8 +336,8 @@ void MeasureDHT(void){
     }
     
     // Checksum
-    /*  int check = DatasDHT[4] + DatasDHT[3] + DatasDHT[2] + DatasDHT[1];
-     *  check &= 0x00FF;
+    /*  uint8_t check = DatasDHT[4] + DatasDHT[3] + DatasDHT[2] + DatasDHT[1];
+     *  
      *  if(check != DatasDHT[0]){
      *      SETERDHT;
      *  }else{
@@ -320,24 +359,29 @@ void ReceiveCharSIM(char * c){
     *c = RCREG;
 }
 
-void SendStringSIM(char c[], uint8_t size){
-    while(size > 0){
-        SendCharSIM(c[(--size)]);
+void SendStringSIM(char c[]){
+    uint8_t i = 0;
+    while(c[i] != 0){
+        SendCharSIM(c[(i)]);
+        i++;
     }
 }
 
 void ReceiveStringSIM(char c[]){
-    uint8_t size = 0;
+    /*uint8_t size = 0;
     while((size < (STRSIZE-1) && CRCD)){
         c[size++] = bufferSIM;
-    }  
+    }
+    c[size] = 0;*/
     // need flag for oversized?
 }
 
 void SyncPicSIM(void){
-    SendStringSIM("AT", 2);
+    /*SendStringSIM("AT");
+    RCIE = 1;
     while(!CRCD)
         ;
+    ReceiveStringSIM(stringSIM);*/
 }
 
 

@@ -1841,10 +1841,27 @@ typedef uint16_t uintptr_t;
 # 12 "./user.h" 2
 # 1 "./system.h" 1
 # 13 "./user.h" 2
-# 49 "./user.h"
+# 50 "./user.h"
 void InitApp(void);
 
-volatile char flags;
+struct flag_struct{
+    uint8_t oor:1;
+    uint8_t eroi:1;
+    uint8_t erdht:1;
+    uint8_t crcd:1;
+} flags;
+
+typedef struct FIFO {
+    char str[32];
+    uint8_t iw;
+    uint8_t ir;
+} fifo;
+
+void InitFifo(fifo * f);
+
+uint8_t ReadFifo(fifo * f, char * c);
+
+uint8_t WriteFifo(fifo * f, char c);
 
 
 void TriggerHY(void);
@@ -1864,7 +1881,7 @@ void Write1DS(void);
 
 void Write0DS(void);
 
-void SendInstructionDS(char c);
+void SendInstructionDS(uint8_t c);
 
 void SkipRom(void);
 
@@ -1872,33 +1889,33 @@ void ConvertT(void);
 
 void ReadTemperature(void);
 
-char ReadDS(void);
+uint8_t ReadDS(void);
 
 void MeasureDS(void);
 
-volatile char temperatureDS[2];
+volatile uint8_t temperatureDS[2];
 
 
 __attribute__((inline)) void StartSeqDHT(void);
 
-__attribute__((inline)) void ReadBitDHT(char * c);
+__attribute__((inline)) void ReadBitDHT(uint8_t * c);
 
 void MeasureDHT(void);
 
-volatile char DatasDHT[5];
+volatile uint8_t DatasDHT[5];
 
 
 void SendCharSIM(char c);
 
 void ReceiveCharSIM(char * c);
 
-void SendStringSIM(char c[], uint8_t size);
+void ReceiveStringSIM(char c[]);
+
+void SendStringSIM(char c[]);
 
 void SyncPicSIM(void);
 
 volatile char bufferSIM;
-
-volatile char stringSIM[16];
 # 9 "interrupts.c" 2
 # 18 "interrupts.c"
 void __attribute__((picinterrupt(""))) isr(void)
@@ -1912,13 +1929,13 @@ void __attribute__((picinterrupt(""))) isr(void)
     if(TMR1IF)
     {
         TMR1ON = 0;
-        flags = (flags & 0xFE) + 0x1;
+        flags.oor = 1;
         TMR1IF=0;
     }
     else if (RCIF)
     {
         ReceiveCharSIM(&bufferSIM);
-        flags = (flags & 0xF7) + 0x08;
+        flags.crcd = 1;
     }
     else
     {

@@ -1,4 +1,8 @@
 Version 4.0 HI-TECH Software Intermediate Code
+"52 ./user.h
+[; ;./user.h: 52: struct flag_struct{
+[s S95 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S95 flag_struct oor eroi erdht crcd ]
 [t ~ __interrupt . k ]
 [t T1 __interrupt ]
 "2890 C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h
@@ -10,8 +14,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 "2743
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 2743: extern volatile __bit RCIF __attribute__((address(0x65)));
 [v _RCIF `Vb ~T0 @X0 0 e@101 ]
-"97 ./user.h
-[; ;./user.h: 97: void ReceiveCharSIM(char * c);
+"115 ./user.h
+[; ;./user.h: 115: void ReceiveCharSIM(char * c);
 [v _ReceiveCharSIM `(v ~T0 @X0 0 ef1`*uc ]
 "54 C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 54: __asm("INDF equ 00h");
@@ -193,24 +197,21 @@ Version 4.0 HI-TECH Software Intermediate Code
 "2363
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 2363: __asm("EECON2 equ 018Dh");
 [; <" EECON2 equ 018Dh ;# ">
-"51 ./user.h
-[; ;./user.h: 51: volatile char flags;
-[v _flags `Vuc ~T0 @X0 1 e ]
-"62
-[; ;./user.h: 62: volatile double distance_cm;
+"57 ./user.h
+[; ;./user.h: 57: } flags;
+[v _flags `S95 ~T0 @X0 1 e ]
+"80
+[; ;./user.h: 80: volatile double distance_cm;
 [v _distance_cm `Vd ~T0 @X0 1 e ]
-"83
-[; ;./user.h: 83: volatile char temperatureDS[2];
+"101
+[; ;./user.h: 101: volatile uint8_t temperatureDS[2];
 [v _temperatureDS `Vuc ~T0 @X0 -> 2 `i e ]
-"92
-[; ;./user.h: 92: volatile char DatasDHT[5];
+"110
+[; ;./user.h: 110: volatile uint8_t DatasDHT[5];
 [v _DatasDHT `Vuc ~T0 @X0 -> 5 `i e ]
-"103
-[; ;./user.h: 103: volatile char bufferSIM;
+"123
+[; ;./user.h: 123: volatile char bufferSIM;
 [v _bufferSIM `Vuc ~T0 @X0 1 e ]
-"105
-[; ;./user.h: 105: volatile char stringSIM[16];
-[v _stringSIM `Vuc ~T0 @X0 -> 16 `i e ]
 [v $root$_isr `(v ~T0 @X0 0 e ]
 "18 interrupts.c
 [; ;interrupts.c: 18: void __attribute__((picinterrupt(""))) isr(void)
@@ -222,7 +223,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 [f ]
 "26
 [; ;interrupts.c: 26:     if(TMR1IF)
-[e $ ! _TMR1IF 96  ]
+[e $ ! _TMR1IF 98  ]
 "27
 [; ;interrupts.c: 27:     {
 {
@@ -230,19 +231,19 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;interrupts.c: 28:         TMR1ON = 0;
 [e = _TMR1ON -> -> 0 `i `b ]
 "29
-[; ;interrupts.c: 29:         flags = (flags & 0xFE) + 0x1;
-[e = _flags -> + & -> _flags `i -> 254 `i -> 1 `i `uc ]
+[; ;interrupts.c: 29:         flags.oor = 1;
+[e = . _flags 0 -> -> 1 `i `uc ]
 "30
 [; ;interrupts.c: 30:         TMR1IF=0;
 [e = _TMR1IF -> -> 0 `i `b ]
 "31
 [; ;interrupts.c: 31:     }
 }
-[e $U 97  ]
+[e $U 99  ]
 "32
 [; ;interrupts.c: 32:     else if (RCIF)
-[e :U 96 ]
-[e $ ! _RCIF 98  ]
+[e :U 98 ]
+[e $ ! _RCIF 100  ]
 "33
 [; ;interrupts.c: 33:     {
 {
@@ -250,24 +251,24 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;interrupts.c: 34:         ReceiveCharSIM(&bufferSIM);
 [e ( _ReceiveCharSIM (1 -> &U _bufferSIM `*uc ]
 "35
-[; ;interrupts.c: 35:         flags = (flags & 0xF7) + 0x08;
-[e = _flags -> + & -> _flags `i -> 247 `i -> 8 `i `uc ]
+[; ;interrupts.c: 35:         flags.crcd = 1;
+[e = . _flags 3 -> -> 1 `i `uc ]
 "36
 [; ;interrupts.c: 36:     }
 }
-[e $U 99  ]
+[e $U 101  ]
 "37
 [; ;interrupts.c: 37:     else
-[e :U 98 ]
+[e :U 100 ]
 "38
 [; ;interrupts.c: 38:     {
 {
 "40
 [; ;interrupts.c: 40:     }
 }
+[e :U 101 ]
 [e :U 99 ]
-[e :U 97 ]
 "41
 [; ;interrupts.c: 41: }
-[e :UE 95 ]
+[e :UE 97 ]
 }
