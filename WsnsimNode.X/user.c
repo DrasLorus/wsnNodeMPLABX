@@ -48,7 +48,7 @@ void InitApp(void)
     
 }
 
-void InitFifo(fifo * f){
+void ResetFifo(fifo * f){
     f->ir = 0;
     f->iw = 0;
 }
@@ -355,10 +355,6 @@ void SendCharSIM(char c){
     TXREG = c;
 }
 
-void ReceiveCharSIM(char * c){
-    *c = RCREG;
-}
-
 void SendStringSIM(char c[]){
     uint8_t i = 0;
     while(c[i] != 0){
@@ -367,21 +363,12 @@ void SendStringSIM(char c[]){
     }
 }
 
-void ReceiveStringSIM(char c[]){
-    /*uint8_t size = 0;
-    while((size < (STRSIZE-1) && CRCD)){
-        c[size++] = bufferSIM;
-    }
-    c[size] = 0;*/
-    // need flag for oversized?
+void ReceiveCharSIM(fifo * f){
+    if(!WriteFifo(f, (char) RCREG))
+        SETFF;
 }
 
-void SyncPicSIM(void){
-    /*SendStringSIM("AT");
-    RCIE = 1;
-    while(!CRCD)
-        ;
-    ReceiveStringSIM(stringSIM);*/
+uint8_t ReceiveStringSIM(fifo * f, uint8_t size){
+    
 }
-
 

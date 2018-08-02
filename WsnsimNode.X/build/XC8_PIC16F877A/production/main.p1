@@ -1,33 +1,30 @@
 Version 4.0 HI-TECH Software Intermediate Code
-"52 ./user.h
-[; ;./user.h: 52: struct flag_struct{
-[s S95 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
-[n S95 flag_struct oor eroi erdht crcd ]
-[p mainexit ]
-"50
-[; ;./user.h: 50: void InitApp(void);
-[v _InitApp `(v ~T0 @X0 0 ef ]
-"59
-[; ;./user.h: 59: typedef struct FIFO {
+"56 ./user.h
+[; ;./user.h: 56: struct flag_struct{
+[s S95 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S95 flag_struct oor eroi erdht crcd ff ]
+"64
+[; ;./user.h: 64: typedef struct FIFO {
 [s S96 `uc -> 32 `i `uc 1 `uc 1 ]
 [n S96 FIFO str iw ir ]
-"65
-[; ;./user.h: 65: void InitFifo(fifo * f);
-[v _InitFifo `(v ~T0 @X0 0 ef1`*S96 ]
-"67
-[; ;./user.h: 67: uint8_t ReadFifo(fifo * f, char * c);
+[p mainexit ]
+"54
+[; ;./user.h: 54: void InitApp(void);
+[v _InitApp `(v ~T0 @X0 0 ef ]
+"70
+[; ;./user.h: 70: void ResetFifo(fifo * f);
+[v _ResetFifo `(v ~T0 @X0 0 ef1`*S96 ]
+"72
+[; ;./user.h: 72: uint8_t ReadFifo(fifo * f, char * c);
 [v _ReadFifo `(uc ~T0 @X0 0 ef2`*S96`*uc ]
-"69
-[; ;./user.h: 69: uint8_t WriteFifo(fifo * f, char c);
-[v _WriteFifo `(uc ~T0 @X0 0 ef2`*S96`uc ]
-"78
-[; ;./user.h: 78: void MeasureHY(void);
+"85
+[; ;./user.h: 85: void MeasureHY(void);
 [v _MeasureHY `(v ~T0 @X0 0 ef ]
-"99
-[; ;./user.h: 99: void MeasureDS(void);
+"106
+[; ;./user.h: 106: void MeasureDS(void);
 [v _MeasureDS `(v ~T0 @X0 0 ef ]
-"108
-[; ;./user.h: 108: void MeasureDHT(void);
+"115
+[; ;./user.h: 115: void MeasureDHT(void);
 [v _MeasureDHT `(v ~T0 @X0 0 ef ]
 "54 C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 54: __asm("INDF equ 00h");
@@ -209,21 +206,21 @@ Version 4.0 HI-TECH Software Intermediate Code
 "2363
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 2363: __asm("EECON2 equ 018Dh");
 [; <" EECON2 equ 018Dh ;# ">
-"57 ./user.h
-[; ;./user.h: 57: } flags;
+"62 ./user.h
+[; ;./user.h: 62: } flags;
 [v _flags `S95 ~T0 @X0 1 e ]
-"80
-[; ;./user.h: 80: volatile double distance_cm;
+"76
+[; ;./user.h: 76: fifo bufferSIM;
+[v _bufferSIM `S96 ~T0 @X0 1 e ]
+"87
+[; ;./user.h: 87: volatile double distance_cm;
 [v _distance_cm `Vd ~T0 @X0 1 e ]
-"101
-[; ;./user.h: 101: volatile uint8_t temperatureDS[2];
+"108
+[; ;./user.h: 108: volatile uint8_t temperatureDS[2];
 [v _temperatureDS `Vuc ~T0 @X0 -> 2 `i e ]
-"110
-[; ;./user.h: 110: volatile uint8_t DatasDHT[5];
+"117
+[; ;./user.h: 117: volatile uint8_t DatasDHT[5];
 [v _DatasDHT `Vuc ~T0 @X0 -> 5 `i e ]
-"123
-[; ;./user.h: 123: volatile char bufferSIM;
-[v _bufferSIM `Vuc ~T0 @X0 1 e ]
 [v $root$_main `(v ~T0 @X0 0 e ]
 "16 main.c
 [; ;main.c: 16: void main(void)
@@ -237,48 +234,42 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;main.c: 22:     InitApp();
 [e ( _InitApp ..  ]
 "24
-[; ;main.c: 24:     fifo bufferSIM;
-[v _bufferSIM `S96 ~T0 @X0 1 a ]
-"25
-[; ;main.c: 25:     char buff;
+[; ;main.c: 24:     char buff;
 [v _buff `uc ~T0 @X0 1 a ]
-"26
-[; ;main.c: 26:     uint8_t test;
+"25
+[; ;main.c: 25:     uint8_t test;
 [v _test `uc ~T0 @X0 1 a ]
+"27
+[; ;main.c: 27:     ResetFifo(&bufferSIM);
+[e ( _ResetFifo (1 &U _bufferSIM ]
 "28
-[; ;main.c: 28:     InitFifo(&bufferSIM);
-[e ( _InitFifo (1 &U _bufferSIM ]
-"29
-[; ;main.c: 29:     test = ReadFifo(&bufferSIM, &buff);
+[; ;main.c: 28:     test = ReadFifo(&bufferSIM, &buff);
 [e = _test ( _ReadFifo (2 , &U _bufferSIM &U _buff ]
-"30
-[; ;main.c: 30:     test = WriteFifo(&bufferSIM, 'A');
-[e = _test ( _WriteFifo (2 , &U _bufferSIM -> -> 65 `ui `uc ]
-"31
-[; ;main.c: 31:     while(1)
+"29
+[; ;main.c: 29:     while(1)
 [e :U 99 ]
-"32
-[; ;main.c: 32:     {
+"30
+[; ;main.c: 30:     {
 {
-"33
-[; ;main.c: 33:         MeasureHY();
+"31
+[; ;main.c: 31:         MeasureHY();
 [e ( _MeasureHY ..  ]
-"34
-[; ;main.c: 34:         MeasureDS();
+"32
+[; ;main.c: 32:         MeasureDS();
 [e ( _MeasureDS ..  ]
-"35
-[; ;main.c: 35:         MeasureDHT();
+"33
+[; ;main.c: 33:         MeasureDHT();
 [e ( _MeasureDHT ..  ]
-"36
-[; ;main.c: 36:         __asm("SLEEP");
+"34
+[; ;main.c: 34:         __asm("SLEEP");
 [; <" SLEEP ;# ">
-"37
-[; ;main.c: 37:     }
+"35
+[; ;main.c: 35:     }
 }
 [e :U 98 ]
 [e $U 99  ]
 [e :U 100 ]
-"39
-[; ;main.c: 39: }
+"37
+[; ;main.c: 37: }
 [e :UE 97 ]
 }

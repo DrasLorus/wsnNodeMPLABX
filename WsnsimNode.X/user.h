@@ -9,13 +9,19 @@
 
 #include <stdint.h>         /* For uint8_t definition */
 #include <stdbool.h>  
+#include <limits.h>
 #include "system.h"
+
+EXIT_SUCCESS;
+#define FF              (flags.ff)             // Fifo Full flag
+#define SETFF           flags.ff = 1
+#define CLRFF           flags.ff = 0
 
 /* HY-SRF05 *******************************************************************/
 #define ECHO            RE1
 #define TRIG            RE0
 #define SOUNDSPEED      340
-#define OOR             (flags.oor)             /* Out Of Range Flag*/
+#define OOR             (flags.oor)             // Out Of Range flag
 #define SETOOR          flags.oor = 1
 #define CLROOR          flags.oor = 0
 
@@ -24,20 +30,20 @@
 #define SKIPROM         0xCC
 #define CONVERTT        0x44
 #define READSCRATCHPAD  0xBE
-#define EROI            (flags.eroi)            /* ERror Of Initialization */
+#define EROI            (flags.eroi)            // ERror Of Initialization 
 #define SETEROI         flags.eroi = 1
 #define CLREROI         flags.eroi = 0
 
 /* DHT11 **********************************************************************/
 #define OUTDHT          RB0
-#define ERDHT           (flags.erdht)           /* ERror DHT */
+#define ERDHT           (flags.erdht)           // ERror DHT 
 #define SETERDHT        flags.erdht = 1
 #define CLRERDHT        flags.erdht = 0
 
 /* SIM800L ********************************************************************/
 #define TXSIM           RC6
 #define RXSIM           RC7
-#define CRCD            (flags.crcd)  /* Character ReCeiveD */
+#define CRCD            (flags.crcd)            // Character ReCeiveD 
 #define SETCRCD         flags.crcd = 1
 #define CLRCRCD         flags.crcd = 0
 #define FIFOSIZE        32
@@ -47,13 +53,14 @@
 /* User Function Prototypes                                                   */
 /******************************************************************************/
 
-void InitApp(void);                 /* I/O and Peripheral Initialization */
+void InitApp(void);                 // I/O and Peripheral Initialization 
 
 struct flag_struct{
     uint8_t oor:1;
     uint8_t eroi:1;
     uint8_t erdht:1;
     uint8_t crcd:1;
+    uint8_t ff:1;
 } flags;
 
 typedef struct FIFO {
@@ -62,20 +69,22 @@ typedef struct FIFO {
     uint8_t ir;
 } fifo;
 
-void InitFifo(fifo * f);
+void ResetFifo(fifo * f);
 
 uint8_t ReadFifo(fifo * f, char * c);
 
 uint8_t WriteFifo(fifo * f, char c);
 
+fifo bufferSIM;
+
 /* HY-SRF05 *******************************************************************/
-void TriggerHY(void);                   /* Launch a measure */
+void TriggerHY(void);                   // Launch a measure 
 
-int EchoDuration(void);                 /* Return the raw duration of the echo */
+int EchoDuration(void);                 // Return the raw duration of the echo 
 
-double CalcDistance(int time);          /* Return the distance in cm */
+double CalcDistance(int time);          // Return the distance in cm 
 
-void MeasureHY(void);                   /* Launch the HY measurement routine */
+void MeasureHY(void);                   // Launch the HY measurement routine 
 
 volatile double distance_cm;
 
@@ -110,18 +119,15 @@ void MeasureDHT(void);
 volatile uint8_t DatasDHT[5];
 
 /* SIM800L ********************************************************************/
-void SendCharSIM(char c);
-
-void ReceiveCharSIM(char * c);
-
-void ReceiveStringSIM(char c[]);
-
-void SendStringSIM(char c[]);
 
 void SyncPicSIM(void);
 
-volatile char bufferSIM;
+void SendCharSIM(char c);
 
-//volatile char stringSIM[STRSIZE];
+void SendStringSIM(char c[]);
+
+void ReceiveCharSIM(fifo * f);
+
+uint8_t ReceiveStringSIM(fifo * f, uint8_t size);
 
 #endif //USER_H

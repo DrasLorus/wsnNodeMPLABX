@@ -1,8 +1,12 @@
 Version 4.0 HI-TECH Software Intermediate Code
-"52 ./user.h
-[; ;./user.h: 52: struct flag_struct{
-[s S95 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
-[n S95 flag_struct oor eroi erdht crcd ]
+"56 ./user.h
+[; ;./user.h: 56: struct flag_struct{
+[s S95 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S95 flag_struct oor eroi erdht crcd ff ]
+"64
+[; ;./user.h: 64: typedef struct FIFO {
+[s S96 `uc -> 32 `i `uc 1 `uc 1 ]
+[n S96 FIFO str iw ir ]
 [t ~ __interrupt . k ]
 [t T1 __interrupt ]
 "2890 C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h
@@ -14,9 +18,9 @@ Version 4.0 HI-TECH Software Intermediate Code
 "2743
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 2743: extern volatile __bit RCIF __attribute__((address(0x65)));
 [v _RCIF `Vb ~T0 @X0 0 e@101 ]
-"115 ./user.h
-[; ;./user.h: 115: void ReceiveCharSIM(char * c);
-[v _ReceiveCharSIM `(v ~T0 @X0 0 ef1`*uc ]
+"127 ./user.h
+[; ;./user.h: 127: void ReceiveCharSIM(fifo * f);
+[v _ReceiveCharSIM `(v ~T0 @X0 0 ef1`*S96 ]
 "54 C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 54: __asm("INDF equ 00h");
 [; <" INDF equ 00h ;# ">
@@ -197,21 +201,21 @@ Version 4.0 HI-TECH Software Intermediate Code
 "2363
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 2363: __asm("EECON2 equ 018Dh");
 [; <" EECON2 equ 018Dh ;# ">
-"57 ./user.h
-[; ;./user.h: 57: } flags;
+"62 ./user.h
+[; ;./user.h: 62: } flags;
 [v _flags `S95 ~T0 @X0 1 e ]
-"80
-[; ;./user.h: 80: volatile double distance_cm;
+"76
+[; ;./user.h: 76: fifo bufferSIM;
+[v _bufferSIM `S96 ~T0 @X0 1 e ]
+"87
+[; ;./user.h: 87: volatile double distance_cm;
 [v _distance_cm `Vd ~T0 @X0 1 e ]
-"101
-[; ;./user.h: 101: volatile uint8_t temperatureDS[2];
+"108
+[; ;./user.h: 108: volatile uint8_t temperatureDS[2];
 [v _temperatureDS `Vuc ~T0 @X0 -> 2 `i e ]
-"110
-[; ;./user.h: 110: volatile uint8_t DatasDHT[5];
+"117
+[; ;./user.h: 117: volatile uint8_t DatasDHT[5];
 [v _DatasDHT `Vuc ~T0 @X0 -> 5 `i e ]
-"123
-[; ;./user.h: 123: volatile char bufferSIM;
-[v _bufferSIM `Vuc ~T0 @X0 1 e ]
 [v $root$_isr `(v ~T0 @X0 0 e ]
 "18 interrupts.c
 [; ;interrupts.c: 18: void __attribute__((picinterrupt(""))) isr(void)
@@ -249,7 +253,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 {
 "34
 [; ;interrupts.c: 34:         ReceiveCharSIM(&bufferSIM);
-[e ( _ReceiveCharSIM (1 -> &U _bufferSIM `*uc ]
+[e ( _ReceiveCharSIM (1 &U _bufferSIM ]
 "35
 [; ;interrupts.c: 35:         flags.crcd = 1;
 [e = . _flags 3 -> -> 1 `i `uc ]

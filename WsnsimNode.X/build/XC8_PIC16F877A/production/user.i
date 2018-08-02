@@ -1847,7 +1847,7 @@ typedef uint16_t uintptr_t;
 # 12 "./user.h" 2
 # 1 "./system.h" 1
 # 13 "./user.h" 2
-# 50 "./user.h"
+# 54 "./user.h"
 void InitApp(void);
 
 struct flag_struct{
@@ -1855,6 +1855,7 @@ struct flag_struct{
     uint8_t eroi:1;
     uint8_t erdht:1;
     uint8_t crcd:1;
+    uint8_t ff:1;
 } flags;
 
 typedef struct FIFO {
@@ -1863,11 +1864,13 @@ typedef struct FIFO {
     uint8_t ir;
 } fifo;
 
-void InitFifo(fifo * f);
+void ResetFifo(fifo * f);
 
 uint8_t ReadFifo(fifo * f, char * c);
 
 uint8_t WriteFifo(fifo * f, char c);
+
+fifo bufferSIM;
 
 
 void TriggerHY(void);
@@ -1911,17 +1914,16 @@ void MeasureDHT(void);
 volatile uint8_t DatasDHT[5];
 
 
-void SendCharSIM(char c);
-
-void ReceiveCharSIM(char * c);
-
-void ReceiveStringSIM(char c[]);
-
-void SendStringSIM(char c[]);
 
 void SyncPicSIM(void);
 
-volatile char bufferSIM;
+void SendCharSIM(char c);
+
+void SendStringSIM(char c[]);
+
+void ReceiveCharSIM(fifo * f);
+
+void ReceiveStringSIM(fifo * f, uint8_t size);
 # 13 "user.c" 2
 
 void InitApp(void)
@@ -1961,7 +1963,7 @@ void InitApp(void)
 
 }
 
-void InitFifo(fifo * f){
+void ResetFifo(fifo * f){
     f->ir = 0;
     f->iw = 0;
 }
@@ -2259,10 +2261,6 @@ void SendCharSIM(char c){
     TXREG = c;
 }
 
-void ReceiveCharSIM(char * c){
-    *c = RCREG;
-}
-
 void SendStringSIM(char c[]){
     uint8_t i = 0;
     while(c[i] != 0){
@@ -2271,19 +2269,9 @@ void SendStringSIM(char c[]){
     }
 }
 
-void ReceiveStringSIM(char c[]){
-
-
-
-
-
-
+void ReceiveCharSIM(fifo * f){
+    if(!WriteFifo(f, (char) RCREG))
+        flags.ff = 1;
 }
 
-void SyncPicSIM(void){
-
-
-
-
-
-}
+void ReceiveStringSIM(fifo * f, uint8_t size);
