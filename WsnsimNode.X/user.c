@@ -369,6 +369,8 @@ void ReceiveCharSIM(fifo * f){
 }
 
 uint8_t ReceiveStringSIM(fifo * f, uint8_t size){
-    
+    if(size > FIFOSIZE){
+        return 0;
+    }
 }
 

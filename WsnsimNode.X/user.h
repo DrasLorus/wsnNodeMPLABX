@@ -9,10 +9,9 @@
 
 #include <stdint.h>         /* For uint8_t definition */
 #include <stdbool.h>  
-#include <limits.h>
+#include <stdlib.h>
 #include "system.h"
 
-EXIT_SUCCESS;
 #define FF              (flags.ff)             // Fifo Full flag
 #define SETFF           flags.ff = 1
 #define CLRFF           flags.ff = 0
