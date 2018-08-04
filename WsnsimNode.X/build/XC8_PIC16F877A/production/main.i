@@ -1847,14 +1847,13 @@ typedef uint16_t uintptr_t;
 
 # 1 "./system.h" 1
 # 14 "./user.h" 2
-# 58 "./user.h"
+# 64 "./user.h"
 void InitApp(void);
 
 struct flag_struct{
     uint8_t oor:1;
     uint8_t eroi:1;
     uint8_t erdht:1;
-    uint8_t crcd:1;
     uint8_t ff:1;
     uint8_t fe:1;
 } flags;
@@ -1863,6 +1862,7 @@ typedef struct FIFO {
     char str[32];
     uint8_t iw;
     uint8_t ir;
+    uint8_t elts;
 } fifo;
 
 void ResetFifo(fifo * f);
@@ -1870,8 +1870,6 @@ void ResetFifo(fifo * f);
 uint8_t ReadFifo(fifo * f, char * c);
 
 uint8_t WriteFifo(fifo * f, char c);
-
-fifo bufferSIM;
 
 
 void TriggerHY(void);
@@ -1916,36 +1914,25 @@ volatile uint8_t DatasDHT[5];
 
 
 
-void SyncPicSIM(void);
-
-void SendCharSIM(char c);
-
-void SendStringSIM(char c[]);
+uint8_t SyncPicSIM(void);
 
 void ReceiveCharSIM(fifo * f);
 
 uint8_t ReceiveStringSIM(fifo * f, char s[], uint8_t size);
+
+void SendCommandSIM(char * command);
 # 6 "main.c" 2
-# 16 "main.c"
+# 18 "main.c"
 void main(void)
 {
+    uint8_t test_var = 0;
 
-
-
-
-    InitApp();
-
-    char buff;
-    uint8_t test;
-
-    ResetFifo(&bufferSIM);
-    test = ReadFifo(&bufferSIM, &buff);
     while(1)
     {
-        MeasureHY();
-        MeasureDS();
-        MeasureDHT();
-        __asm("SLEEP");
+        test_var = 1;
+        _delay((unsigned long)((2000)*(20000000/4000.0)));
+        test_var = 0;
+        _delay((unsigned long)((2000)*(20000000/4000.0)));
     }
-
+# 70 "main.c"
 }

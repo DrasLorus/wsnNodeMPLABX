@@ -1842,14 +1842,13 @@ typedef uint16_t uintptr_t;
 
 # 1 "./system.h" 1
 # 14 "./user.h" 2
-# 58 "./user.h"
+# 64 "./user.h"
 void InitApp(void);
 
 struct flag_struct{
     uint8_t oor:1;
     uint8_t eroi:1;
     uint8_t erdht:1;
-    uint8_t crcd:1;
     uint8_t ff:1;
     uint8_t fe:1;
 } flags;
@@ -1858,6 +1857,7 @@ typedef struct FIFO {
     char str[32];
     uint8_t iw;
     uint8_t ir;
+    uint8_t elts;
 } fifo;
 
 void ResetFifo(fifo * f);
@@ -1911,15 +1911,13 @@ volatile uint8_t DatasDHT[5];
 
 
 
-void SyncPicSIM(void);
-
-void SendCharSIM(char c);
-
-void SendStringSIM(char c[]);
+uint8_t SyncPicSIM(void);
 
 void ReceiveCharSIM(fifo * f);
 
 uint8_t ReceiveStringSIM(fifo * f, char s[], uint8_t size);
+
+void SendCommandSIM(char * command);
 # 9 "interrupts.c" 2
 # 18 "interrupts.c"
 void __attribute__((picinterrupt(""))) isr(void)
@@ -1936,10 +1934,9 @@ void __attribute__((picinterrupt(""))) isr(void)
         flags.oor = 1;
         TMR1IF=0;
     }
-    else if (RCIF)
+    else if(RCIF)
     {
         ReceiveCharSIM(&bufferSIM);
-        flags.crcd = 1;
     }
     else
     {

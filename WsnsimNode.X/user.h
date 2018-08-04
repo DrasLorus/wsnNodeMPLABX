@@ -12,6 +12,15 @@
 
 #include "system.h"
 
+#define TESTPICm    -1
+#define IDLEm       0
+#define SLEEPm      1
+#define MEASUREm    2
+#define TRANSMITm   3
+#define COMPLETEm   4
+
+#define DEFAULT     TESTPICm
+
 #define FF              (flags.ff)             // Fifo Full flag
 #define SETFF           flags.ff = 1
 #define CLRFF           flags.ff = 0

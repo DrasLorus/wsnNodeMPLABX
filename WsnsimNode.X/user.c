@@ -41,7 +41,11 @@ void InitApp(void)
     RCIE = 1;
     
     /* Clear all flags */
-    flags = 0;  
+    CLROOR;
+    CLREROI;
+    CLRERDHT;
+    CLRFF;
+    CLRFE;
 }
 
 void ResetFifo(fifo * f){
@@ -359,7 +363,7 @@ void SendCharSIM(char c){
 void SendStringSIM(char * s){
     uint8_t i = 0;
     while(*(s + i) != 0){
-        SendCharSIM((s + i));
+        SendCharSIM(*(s + i));
         i++;
     }
 }
@@ -391,9 +395,9 @@ void SendCommandSIM(char * command){
 
 uint8_t SyncPicSIM(void){
     SendStringSIM("AT");
-    SendCharSIM("\r");
+    SendCharSIM('\r');
     //TODO
         while(FE)
             ;
-    
+    return 1;
 }

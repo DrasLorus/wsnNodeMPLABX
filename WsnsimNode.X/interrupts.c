@@ -29,7 +29,7 @@ void __interrupt() isr(void)
         SETOOR;
         TMR1IF=0; /* Clear Interrupt Flag */
     }
-    else if (RCIF)
+    else if(RCIF)
     {
         ReceiveCharSIM(&bufferSIM);
     }

@@ -1,31 +1,13 @@
 Version 4.0 HI-TECH Software Intermediate Code
-"60 ./user.h
-[; ;./user.h: 60: struct flag_struct{
-[s S95 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
-[n S95 flag_struct oor eroi erdht crcd ff fe ]
-"69
-[; ;./user.h: 69: typedef struct FIFO {
-[s S96 `uc -> 32 `i `uc 1 `uc 1 ]
-[n S96 FIFO str iw ir ]
+"66 ./user.h
+[; ;./user.h: 66: struct flag_struct{
+[s S95 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S95 flag_struct oor eroi erdht ff fe ]
 [p mainexit ]
-"58
-[; ;./user.h: 58: void InitApp(void);
-[v _InitApp `(v ~T0 @X0 0 ef ]
-"75
-[; ;./user.h: 75: void ResetFifo(fifo * f);
-[v _ResetFifo `(v ~T0 @X0 0 ef1`*S96 ]
-"77
-[; ;./user.h: 77: uint8_t ReadFifo(fifo * f, char * c);
-[v _ReadFifo `(uc ~T0 @X0 0 ef2`*S96`*uc ]
-"90
-[; ;./user.h: 90: void MeasureHY(void);
-[v _MeasureHY `(v ~T0 @X0 0 ef ]
-"111
-[; ;./user.h: 111: void MeasureDS(void);
-[v _MeasureDS `(v ~T0 @X0 0 ef ]
-"120
-[; ;./user.h: 120: void MeasureDHT(void);
-[v _MeasureDHT `(v ~T0 @X0 0 ef ]
+[v F842 `(v ~T0 @X0 1 tf1`ul ]
+"92 C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic.h
+[v __delay `JF842 ~T0 @X0 0 e ]
+[p i __delay ]
 "54 C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 54: __asm("INDF equ 00h");
 [; <" INDF equ 00h ;# ">
@@ -206,70 +188,56 @@ Version 4.0 HI-TECH Software Intermediate Code
 "2363
 [; ;C:\Program Files (x86)\Microchip\xc8\v2.00\pic\include\pic16f877a.h: 2363: __asm("EECON2 equ 018Dh");
 [; <" EECON2 equ 018Dh ;# ">
-"67 ./user.h
-[; ;./user.h: 67: } flags;
+"72 ./user.h
+[; ;./user.h: 72: } flags;
 [v _flags `S95 ~T0 @X0 1 e ]
-"81
-[; ;./user.h: 81: fifo bufferSIM;
-[v _bufferSIM `S96 ~T0 @X0 1 e ]
-"92
-[; ;./user.h: 92: volatile double distance_cm;
+"96
+[; ;./user.h: 96: volatile double distance_cm;
 [v _distance_cm `Vd ~T0 @X0 1 e ]
-"113
-[; ;./user.h: 113: volatile uint8_t temperatureDS[2];
+"117
+[; ;./user.h: 117: volatile uint8_t temperatureDS[2];
 [v _temperatureDS `Vuc ~T0 @X0 -> 2 `i e ]
-"122
-[; ;./user.h: 122: volatile uint8_t DatasDHT[5];
+"126
+[; ;./user.h: 126: volatile uint8_t DatasDHT[5];
 [v _DatasDHT `Vuc ~T0 @X0 -> 5 `i e ]
 [v $root$_main `(v ~T0 @X0 0 e ]
-"16 main.c
-[; ;main.c: 16: void main(void)
+"18 main.c
+[; ;main.c: 18: void main(void)
 [v _main `(v ~T0 @X0 1 ef ]
-"17
-[; ;main.c: 17: {
+"19
+[; ;main.c: 19: {
 {
 [e :U _main ]
 [f ]
+"20
+[; ;main.c: 20:     uint8_t test_var = 0;
+[v _test_var `uc ~T0 @X0 1 a ]
+[e = _test_var -> -> 0 `i `uc ]
 "22
-[; ;main.c: 22:     InitApp();
-[e ( _InitApp ..  ]
-"24
-[; ;main.c: 24:     char buff;
-[v _buff `uc ~T0 @X0 1 a ]
-"25
-[; ;main.c: 25:     uint8_t test;
-[v _test `uc ~T0 @X0 1 a ]
-"27
-[; ;main.c: 27:     ResetFifo(&bufferSIM);
-[e ( _ResetFifo (1 &U _bufferSIM ]
-"28
-[; ;main.c: 28:     test = ReadFifo(&bufferSIM, &buff);
-[e = _test ( _ReadFifo (2 , &U _bufferSIM &U _buff ]
-"29
-[; ;main.c: 29:     while(1)
+[; ;main.c: 22:     while(1)
 [e :U 99 ]
-"30
-[; ;main.c: 30:     {
+"23
+[; ;main.c: 23:     {
 {
-"31
-[; ;main.c: 31:         MeasureHY();
-[e ( _MeasureHY ..  ]
-"32
-[; ;main.c: 32:         MeasureDS();
-[e ( _MeasureDS ..  ]
-"33
-[; ;main.c: 33:         MeasureDHT();
-[e ( _MeasureDHT ..  ]
-"34
-[; ;main.c: 34:         __asm("SLEEP");
-[; <" SLEEP ;# ">
-"35
-[; ;main.c: 35:     }
+"24
+[; ;main.c: 24:         test_var = 1;
+[e = _test_var -> -> 1 `i `uc ]
+"25
+[; ;main.c: 25:         _delay((unsigned long)((2000)*(20000000/4000.0)));
+[e ( __delay (1 -> * -> -> 2000 `i `d / -> -> 20000000 `l `d .4000.0 `ul ]
+"26
+[; ;main.c: 26:         test_var = 0;
+[e = _test_var -> -> 0 `i `uc ]
+"27
+[; ;main.c: 27:         _delay((unsigned long)((2000)*(20000000/4000.0)));
+[e ( __delay (1 -> * -> -> 2000 `i `d / -> -> 20000000 `l `d .4000.0 `ul ]
+"28
+[; ;main.c: 28:     }
 }
 [e :U 98 ]
 [e $U 99  ]
 [e :U 100 ]
-"37
-[; ;main.c: 37: }
+"70
+[; ;main.c: 70: }
 [e :UE 97 ]
 }

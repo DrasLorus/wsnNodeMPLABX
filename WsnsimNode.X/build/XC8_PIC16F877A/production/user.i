@@ -1848,14 +1848,13 @@ typedef uint16_t uintptr_t;
 
 # 1 "./system.h" 1
 # 14 "./user.h" 2
-# 58 "./user.h"
+# 64 "./user.h"
 void InitApp(void);
 
 struct flag_struct{
     uint8_t oor:1;
     uint8_t eroi:1;
     uint8_t erdht:1;
-    uint8_t crcd:1;
     uint8_t ff:1;
     uint8_t fe:1;
 } flags;
@@ -1864,6 +1863,7 @@ typedef struct FIFO {
     char str[32];
     uint8_t iw;
     uint8_t ir;
+    uint8_t elts;
 } fifo;
 
 void ResetFifo(fifo * f);
@@ -1871,8 +1871,6 @@ void ResetFifo(fifo * f);
 uint8_t ReadFifo(fifo * f, char * c);
 
 uint8_t WriteFifo(fifo * f, char c);
-
-fifo bufferSIM;
 
 
 void TriggerHY(void);
@@ -1917,15 +1915,13 @@ volatile uint8_t DatasDHT[5];
 
 
 
-void SyncPicSIM(void);
-
-void SendCharSIM(char c);
-
-void SendStringSIM(char c[]);
+uint8_t SyncPicSIM(void);
 
 void ReceiveCharSIM(fifo * f);
 
 uint8_t ReceiveStringSIM(fifo * f, char s[], uint8_t size);
+
+void SendCommandSIM(char * command);
 # 13 "user.c" 2
 
 void InitApp(void)
@@ -1961,21 +1957,23 @@ void InitApp(void)
     flags.oor = 0;
     flags.eroi = 0;
     flags.erdht = 0;
-    flags.crcd = 0;
-
+    flags.ff = 0;
+    flags.fe = 0;
 }
 
 void ResetFifo(fifo * f){
     f->ir = 0;
     f->iw = 0;
+    f->elts = 0;
 }
 
 uint8_t ReadFifo(fifo * f, char * c){
-    if(f->ir == f->iw){
+    if(f->elts == 0){
         return 0;
     }else{
         *c = f->str[f->ir];
-        if(f->ir >= (32 - 1)){
+        f->elts--;
+        if(f->ir > (32 - 2)){
             f->ir = 0;
         }else{
             f->ir += 1;
@@ -1986,11 +1984,12 @@ uint8_t ReadFifo(fifo * f, char * c){
 }
 
 uint8_t WriteFifo(fifo * f, char c){
-    if(((f->ir + 1) == f->iw) || ((f->ir - (32 - 1)) == f->iw)){
+    if(f->elts == 32){
         return 0;
     }else{
         f->str[f->iw] = c;
-        if(f->iw > 32 -1){
+        f->elts++;
+        if(f->iw > 32 - 2){
             f->iw = 0;
         }else{
             f->iw += 1;
@@ -2253,7 +2252,7 @@ void MeasureDHT(void){
         DatasDHT[(i-1)>>3] += buff;
         i--;
     }
-# 349 "user.c"
+# 352 "user.c"
 }
 
 
@@ -2265,10 +2264,10 @@ void SendCharSIM(char c){
     TXREG = c;
 }
 
-void SendStringSIM(char c[]){
+void SendStringSIM(char * s){
     uint8_t i = 0;
-    while(c[i] != 0){
-        SendCharSIM(c[(i)]);
+    while(*(s + i) != 0){
+        SendCharSIM(*(s + i));
         i++;
     }
 }
@@ -2279,7 +2278,7 @@ void ReceiveCharSIM(fifo * f){
 }
 
 uint8_t ReceiveStringSIM(fifo * f, char s[], uint8_t size){
-    if(size > 32){
+    if((size > 32) || (flags.fe) || (f->elts < size)){
         return 0;
     }
     uint8_t i = 0;
@@ -2291,5 +2290,18 @@ uint8_t ReceiveStringSIM(fifo * f, char s[], uint8_t size){
         i++;
     }
     s[size] = '\0';
+    return 1;
+}
+
+void SendCommandSIM(char * command){
+    *command = 0;
+}
+
+uint8_t SyncPicSIM(void){
+    SendStringSIM("AT");
+    SendCharSIM('\r');
+
+        while((flags.fe))
+            ;
     return 1;
 }

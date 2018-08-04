@@ -4,7 +4,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 "29
 [p x WDTE = OFF ]
 "30
-[p x PWRTE = ON ]
+[p x PWRTE = OFF ]
 "31
 [p x BOREN = ON ]
 "32
