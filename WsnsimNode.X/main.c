@@ -1,8 +1,11 @@
+
 /******************************************************************************/
 /* Files to Include                                                           */
 /******************************************************************************/
 
 #include "user.h"          /* User funct/params, such as InitApp */
+
+#define MODE SLEEPm
 
 /******************************************************************************/
 /* Main Program                                                               */
@@ -81,11 +84,20 @@ void main(void)
 
 void main(void)
 {
-
+    InitApp();
+    
+    while(1){
+        
+    }
 #elif   MODE==SLEEPm
 
 void main(void)
 {
+    InitApp();
+    
+    while(1){
+        asm("SLEEP");
+    }
 
 #elif   MODE==MEASUREm
 
