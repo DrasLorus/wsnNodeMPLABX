@@ -11,7 +11,6 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>configuration_bits.c</itemPath>
-      <itemPath>interrupts.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>system.c</itemPath>
       <itemPath>user.c</itemPath>
@@ -60,7 +59,7 @@
         <makeCustomizationPostStep></makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
-        <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
+        <makeCustomizationNormalizeHexFile>true</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
       <HI-TECH-COMP>
         <property key="asmlist" value="true"/>
@@ -74,7 +73,7 @@
         <property key="opt-xc8-compiler-strict_ansi" value="false"/>
         <property key="optimization-assembler" value="true"/>
         <property key="optimization-assembler-files" value="true"/>
-        <property key="optimization-debug" value="false"/>
+        <property key="optimization-debug" value="true"/>
         <property key="optimization-invariant-enable" value="false"/>
         <property key="optimization-invariant-value" value="16"/>
         <property key="optimization-level" value="-O0"/>
@@ -106,8 +105,8 @@
         <property key="data-model-ram" value=""/>
         <property key="data-model-size-of-double" value="32"/>
         <property key="data-model-size-of-double-gcc" value="no-short-double"/>
-        <property key="data-model-size-of-float" value="32"/>
-        <property key="data-model-size-of-float-gcc" value="no-short-float"/>
+        <property key="data-model-size-of-float" value="24"/>
+        <property key="data-model-size-of-float-gcc" value="short-float"/>
         <property key="display-class-usage" value="false"/>
         <property key="display-hex-usage" value="false"/>
         <property key="display-overall-usage" value="true"/>
@@ -119,14 +118,14 @@
         <property key="fill-flash-options-increment" value=""/>
         <property key="fill-flash-options-seq" value=""/>
         <property key="fill-flash-options-what" value="0"/>
-        <property key="format-hex-file-for-download" value="false"/>
+        <property key="format-hex-file-for-download" value="true"/>
         <property key="initialize-data" value="true"/>
         <property key="keep-generated-startup.as" value="false"/>
         <property key="link-in-c-library" value="true"/>
         <property key="link-in-c-library-gcc" value=""/>
         <property key="link-in-peripheral-library" value="false"/>
         <property key="managed-stack" value="false"/>
-        <property key="opt-xc8-linker-file" value="false"/>
+        <property key="opt-xc8-linker-file" value="true"/>
         <property key="opt-xc8-linker-link_startup" value="false"/>
         <property key="opt-xc8-linker-serial" value=""/>
         <property key="program-the-device-with-default-config-words" value="true"/>
@@ -222,7 +221,7 @@
         <makeCustomizationPostStep></makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
-        <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
+        <makeCustomizationNormalizeHexFile>true</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
       <HI-TECH-COMP>
         <property key="asmlist" value="true"/>
@@ -236,7 +235,7 @@
         <property key="opt-xc8-compiler-strict_ansi" value="false"/>
         <property key="optimization-assembler" value="true"/>
         <property key="optimization-assembler-files" value="true"/>
-        <property key="optimization-debug" value="false"/>
+        <property key="optimization-debug" value="true"/>
         <property key="optimization-invariant-enable" value="false"/>
         <property key="optimization-invariant-value" value="16"/>
         <property key="optimization-level" value="-O0"/>
@@ -268,8 +267,8 @@
         <property key="data-model-ram" value=""/>
         <property key="data-model-size-of-double" value="32"/>
         <property key="data-model-size-of-double-gcc" value="no-short-double"/>
-        <property key="data-model-size-of-float" value="32"/>
-        <property key="data-model-size-of-float-gcc" value="no-short-float"/>
+        <property key="data-model-size-of-float" value="24"/>
+        <property key="data-model-size-of-float-gcc" value="short-float"/>
         <property key="display-class-usage" value="false"/>
         <property key="display-hex-usage" value="false"/>
         <property key="display-overall-usage" value="true"/>
@@ -281,14 +280,14 @@
         <property key="fill-flash-options-increment" value=""/>
         <property key="fill-flash-options-seq" value=""/>
         <property key="fill-flash-options-what" value="0"/>
-        <property key="format-hex-file-for-download" value="false"/>
+        <property key="format-hex-file-for-download" value="true"/>
         <property key="initialize-data" value="true"/>
         <property key="keep-generated-startup.as" value="false"/>
         <property key="link-in-c-library" value="true"/>
         <property key="link-in-c-library-gcc" value=""/>
         <property key="link-in-peripheral-library" value="false"/>
         <property key="managed-stack" value="false"/>
-        <property key="opt-xc8-linker-file" value="false"/>
+        <property key="opt-xc8-linker-file" value="true"/>
         <property key="opt-xc8-linker-link_startup" value="false"/>
         <property key="opt-xc8-linker-serial" value=""/>
         <property key="program-the-device-with-default-config-words" value="true"/>
@@ -296,7 +295,7 @@
       <PICkit2PlatformTool>
         <property key="pk2settings.3state" value="false"/>
         <property key="pk2settings.preserveee" value="false"/>
-        <property key="pk2settings.setvddvoltage" value=""/>
+        <property key="pk2settings.setvddvoltage" value="5"/>
         <property key="pk2settings.userpgmexec" value="true"/>
         <property key="pk2settings.usetargetpower" value="false"/>
       </PICkit2PlatformTool>

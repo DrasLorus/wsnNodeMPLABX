@@ -17,14 +17,34 @@
  
 void main(void)
 {
-    uint8_t test_var = 0;
+    GIE = 0;
+    TRISD = 0;
+    PORTD = 0;
+    
+    CLROOR;
+    CLREROI;
+    CLRERDHT;
+    CLRFF;
+    CLRFE;
+    CLRUER;
+    
+    T0CS = 0;
+    PSA = 0;
+    PS2 = 1;
+    PS1 = 1;
+    PS0 = 1;
+    
+    T0IF = 0;
+    T0IE = 1;
+    GIE = 1;
+    PEIE = 1;
     
     while(1)
     {
-        test_var = 1;
-        __delay_ms(2000);
-        test_var = 0;
-        __delay_ms(2000);
+        RD1 = 0;
+        __delay_ms(1000);
+        RD1 = 1;
+        __delay_ms(1000);
     }
 
 #elif   MODE==IDLEm

@@ -15,6 +15,8 @@ void InitApp(void)
 {
     /* TODO Initialize User Ports/Peripherals/Project here */
     
+    GIE = 0;
+    
     /* Setup analog functionality and port direction */
     
     TRISE = 0x2;            /* RE0(TRIG)/RE2 output, RE1(ECHO) input */
@@ -46,6 +48,7 @@ void InitApp(void)
     CLRERDHT;
     CLRFF;
     CLRFE;
+    CLRUER;
 }
 
 void ResetFifo(fifo * f){
@@ -390,7 +393,7 @@ uint8_t ReceiveStringSIM(fifo * f, char s[], uint8_t size){
 }
 
 void SendCommandSIM(char * command){
-    *command = 0;
+    SETUER;
 }
 
 uint8_t SyncPicSIM(void){

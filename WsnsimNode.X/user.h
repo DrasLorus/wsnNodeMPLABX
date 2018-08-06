@@ -27,6 +27,9 @@
 #define FE              (flags.fe)             // Fifo Empty flag
 #define SETFE           flags.fe = 1
 #define CLRFE           flags.fe = 0
+#define UER             (flags.fe)             // Unknown ERror flag
+#define SETUER          flags.fe = 1
+#define CLRUER          flags.fe = 0
 
 /* HY-SRF05 *******************************************************************/
 #define ECHO            RE1
@@ -69,6 +72,7 @@ struct flag_struct{
     uint8_t erdht:1;
     uint8_t ff:1;
     uint8_t fe:1;
+    uint8_t uer:1;
 } flags;
 
 typedef struct FIFO {
