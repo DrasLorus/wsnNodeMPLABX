@@ -12,6 +12,36 @@
 #define MODE DEFAULT
 #endif
 
+void __interrupt() isr(void)
+{
+#if MODE == TESTPICm
+    if(T0IF){
+        uint8_t b = RD2;
+        RD2 = !b;
+        T0IF = 0;
+    }
+    else
+    {
+        /* Unhandled interrupts */
+    }
+#else
+        /* Determine which flag generated the interrupt */
+    if(TMR1IF)
+    {   
+        TMR1ON = 0;
+        SETOOR;
+        TMR1IF=0; /* Clear Interrupt Flag */
+    }
+    else if(RCIF)
+    {
+        ReceiveCharSIM(&bufferSIM);
+    }
+    else
+    {
+   
+    }
+#endif
+}
 
 #if     MODE==TESTPICm
  
