@@ -288,25 +288,11 @@ inline void TMR1Config18ms(void){
     T1CON = 0x30;       // '00110000'
 }
 
-void WaitFor18msTMR1(void){
-    TMR1 = 0;
-    unsigned long int l = 0;
-    TMR1ON = 1;
-    while(l<171664){
-        TMR1IF = 0;
-        while(!TMR1IF)
-            ;
-        l++;
-    }
-    TMR1ON = 0;
-    TMR1IF = 0;
-}
-
 inline void StartSeqDHT(){
     TMR1Config18ms();
     TMR2Config40us();
     DriveLowDHT();
-    WaitFor18msTMR1();
+    __delay_ms(18);
     ReleaseDHT();
     while(OUTDHT)
         ;
@@ -341,14 +327,14 @@ void MeasureDHT(void){
     }
     
     // Checksum
-    /*  uint8_t check = DatasDHT[4] + DatasDHT[3] + DatasDHT[2] + DatasDHT[1];
-     *  
-     *  if(check != DatasDHT[0]){
-     *      SETERDHT;
-     *  }else{
-     *      CLRERDHT;
-     *  }
-     */
+      uint8_t check = DatasDHT[4] + DatasDHT[3] + DatasDHT[2] + DatasDHT[1];
+      
+      if(check != DatasDHT[0]){
+          SETERDHT;
+      }else{
+          CLRERDHT;
+      }
+     
 }
 
 /******************************************************************************/

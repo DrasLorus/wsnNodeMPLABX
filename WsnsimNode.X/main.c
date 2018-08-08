@@ -5,7 +5,7 @@
 
 #include "user.h"          /* User funct/params, such as InitApp */
 
-#define MODE TESTPICm
+#define MODE MEASUREm
 
 /******************************************************************************/
 /* Main Program                                                               */
