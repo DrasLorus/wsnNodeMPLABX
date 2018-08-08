@@ -9,7 +9,6 @@
 
 #include <stdint.h>         /* For uint8_t definition */
 #include <stdbool.h>  
-
 #include "system.h"
 
 #define TESTPICm    -1
@@ -59,6 +58,8 @@
 #define RXSIM           RC7
 #define FIFOSIZE        32
 #define BAUDRATE        9600
+#define CTRL_Z          26
+#define ESC             27
 
 /******************************************************************************/
 /* User Function Prototypes                                                   */
@@ -133,12 +134,12 @@ volatile uint8_t DatasDHT[5];
 
 /* SIM800L ********************************************************************/
 
-uint8_t SyncPicSIM(void);
+void SyncPicSIM(void);
 
 void ReceiveCharSIM(fifo * f);
 
-uint8_t ReceiveStringSIM(fifo * f, char s[],  uint8_t size);
-
 void SendCommandSIM(char * command);
+
+void SendSmsSIM(char * numero, char * message);
 
 #endif //USER_H

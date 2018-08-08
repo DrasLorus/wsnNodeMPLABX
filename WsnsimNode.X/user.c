@@ -5,10 +5,6 @@
 
 #include <xc.h>         /* XC8 General Include File */
 
-
-#include <stdint.h>         /* For uint8_t definition */
-#include <stdbool.h>        /* For true/false definition */
-
 #include "user.h"
 
 void InitApp(void)
@@ -49,6 +45,7 @@ void InitApp(void)
     CLRFF;
     CLRFE;
     CLRUER;
+    
 }
 
 void ResetFifo(fifo * f){
@@ -291,7 +288,7 @@ inline void TMR1Config18ms(void){
     T1CON = 0x30;       // '00110000'
 }
 
-inline void WaitFor18msTMR1(void){
+void WaitFor18msTMR1(void){
     TMR1 = 0;
     unsigned long int l = 0;
     TMR1ON = 1;
@@ -365,7 +362,7 @@ void SendCharSIM(char c){
 
 void SendStringSIM(char * s){
     uint8_t i = 0;
-    while(*(s + i) != 0){
+    while(*(s + i)){
         SendCharSIM(*(s + i));
         i++;
     }
@@ -393,14 +390,52 @@ uint8_t ReceiveStringSIM(fifo * f, char s[], uint8_t size){
 }
 
 void SendCommandSIM(char * command){
-    SETUER;
+    SendStringSIM("AT");
+    SendStringSIM(command);
+    SendCharSIM('\r');
 }
 
-uint8_t SyncPicSIM(void){
+void SyncPicSIM(void){
     SendStringSIM("AT");
     SendCharSIM('\r');
-    //TODO
-        while(FE)
-            ;
-    return 1;
+    
+    CREN = 1;
+    while(bufferSIM.elts < 6)
+        ;  
+    CREN = 0;
+    
+    char s[7];
+    
+    ReceiveStringSIM(&bufferSIM, s, 6);
+    if( !(s[2] == 'O' && s[3] == 'K' && s[5] == 0)){       
+        SETUER;
+    }
+}
+
+void SendSmsSIM(char * numero, char * message){       
+    SendCommandSIM("+CMFG=1");
+    SendCommandSIM("+CSCS=\"GSM\"");
+
+    char s[41];
+
+    s[0] = '+';
+    s[1] = 'C';
+    s[2] = 'M';
+    s[3] = 'G';
+    s[4] = 'S';
+    s[5] = '=';
+    s[6] = '\"';
+    
+    uint8_t i = 0;
+    while(*(numero+i) && (i < 32)){
+        s[7+i] = *(numero+i);
+        i++;
+    }
+    s[i+7] = '\"';
+    s[i+8] = 0;
+    SendCommandSIM(s);
+    SendStringSIM(message);
+    SendCharSIM(CTRL_Z);
+    SendCharSIM('\r');
+        
 }

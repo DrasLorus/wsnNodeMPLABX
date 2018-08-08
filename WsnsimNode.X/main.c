@@ -5,7 +5,7 @@
 
 #include "user.h"          /* User funct/params, such as InitApp */
 
-#define MODE SLEEPm
+#define MODE TESTPICm
 
 /******************************************************************************/
 /* Main Program                                                               */
@@ -41,7 +41,7 @@ void __interrupt() isr(void)
     }
     else
     {
-   
+        SETUER;
     }
 #endif
 }
@@ -79,7 +79,7 @@ void main(void)
         RD1 = 1;
         __delay_ms(1000);
     }
-
+}
 #elif   MODE==IDLEm
 
 void main(void)
@@ -89,6 +89,7 @@ void main(void)
     while(1){
         
     }
+}
 #elif   MODE==SLEEPm
 
 void main(void)
@@ -98,23 +99,36 @@ void main(void)
     while(1){
         asm("SLEEP");
     }
-
+}
 #elif   MODE==MEASUREm
 
 void main(void)
 {
-
+    InitApp();
+    char i = 0;
+    
+    while(1){
+        MeasureDHT();
+        __delay_ms(5000);
+        
+        i++;
+        
+    }
+}
 #elif   MODE==TRANSMITm
     
 void main(void)
 {
-
+    InitApp();
+    SyncPicSIM();
+}
 #elif   MODE==COMPLETEm
 
 void main(void)
 {
     /* Initialize I/O and Peripherals for application */
     InitApp();
+    SyncPicSIM();
     
     char buff;
     uint8_t test;
@@ -128,6 +142,5 @@ void main(void)
         MeasureDHT();
         asm("SLEEP");
     }
+}   
 #endif
-}
-
