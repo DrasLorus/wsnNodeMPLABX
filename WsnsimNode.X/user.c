@@ -15,10 +15,11 @@ void InitApp(void)
     
     /* Setup analog functionality and port direction */
     
+    ADCON1 = 0x82;          /* Set all RE pins as Digital I/O b'10000010' */
     TRISE = 0x2;            /* RE0(TRIG)/RE2 output, RE1(ECHO) input */
     RE0 = 0;
     
-    TRISB = 0x00;
+    TRISB = 0x05;
             
     /* Initialize peripherals */ 
     
@@ -45,6 +46,8 @@ void InitApp(void)
     CLRFF;
     CLRFE;
     CLRUER;
+    
+    ResetDS();
     
 }
 
@@ -89,28 +92,29 @@ uint8_t WriteFifo(fifo * f, char c){
 /******************************************************************************/
 /* HY-SRF05 *******************************************************************/
 /******************************************************************************/
-void TriggerHY(){ 
+void TriggerHY(){   
+    T1CON = 0x00;
+
+    TMR1H = 0x00;
+    TMR1L = 0x00;
+    
     TRIG = 1;
     __delay_us(10);
     TRIG = 0;
 }
 
-int EchoDuration(){     
-    int d = 0;
+uint16_t EchoDuration(){     
+    uint16_t d = 0;
     while(!ECHO);       /* When Echo pin is driven High */
     TMR1ON = 1;         /* Activate timer 1 and let it run */
     while(ECHO);        /* Then, when the pin is driven low */
     TMR1ON = 0;         /* Desactivate timer 1 */
-    d = TMR1H;          /* Extract the MSB */
-    d <<= 8;            /* Put them on high position*/
-    d += TMR1L;         /* Add the LSB */
-    TMR1H = 0x00;
-    TMR1L = 0x00;
+    d = (TMR1L | (TMR1H<<8));
     return d;           /* Return the result */
 }
 
-double CalcDistance(int time){
-    return (((double)time/(double)FCY)*SOUNDSPEED/100/2);
+double CalcDistance(uint16_t time){
+    return (((double)time)/((double)FCY)*100.0*((double)SOUNDSPEED)/2.0);
 }
 
 
@@ -124,28 +128,28 @@ void MeasureHY(){
 /* DS18B20 ********************************************************************/
 /******************************************************************************/
 inline void ReleaseDS(){
-    TRISB = 0x00;
+    TRISB |= 0x04;  // xxxxxxxx | 00000100 = xxxxxx1xx
 }
 
 inline void DriveLowDS(){
-    TRISB = 0x04;
+    TRISB &= 0xFB;  // xxxxxxxx & 11111011 = xxxxxx0xx
     OUTDS = 0;
 }
 
 inline void WaitTMR2IFDS(){
-    TMR2 =0;
+    TMR2 = 0;
     TMR2ON = 1;
     while(!TMR2IF);
     TMR2ON = 0;
     TMR2IF = 0;
 }
 
-void TMR2Config480us(){
+inline void TMR2Config480us(){
     T2CON = 0x02;       // '00000010'
     PR2   = 150;        // 150 x 16 x (1/5)E-6 = 480E-6 
 }
 
-void TMR2Config10us(){
+inline void TMR2Config10us(){
     T2CON = 0x00;       // '00000000'
     PR2   = 50;         // 50 x (1/5)E-6 = 10E-6 
 }
@@ -184,7 +188,7 @@ void InitializationSeqDS(){
         SETEROI;
         TMR2ON = 0;
         TMR2IF = 0;
-        exit();
+        return;
     }
     while(!TMR2IF);
     TMR2ON = 0;
@@ -271,12 +275,12 @@ void MeasureDS(){
 /* DHT11 **********************************************************************/
 /******************************************************************************/
 inline void DriveLowDHT(){
-    TRISB  = 0x00;
+    TRISB  &= 0xFE;     // xxxxxxxx & 11111110 = xxxxxxxx0
     OUTDHT = 0;
 }
 
 inline void ReleaseDHT(){
-    TRISB  = 0x01;
+    TRISB  |= 0x01;     // xxxxxxxx | 00000001 = xxxxxxxx1
 }
 
 inline void TMR2Config40us(void){

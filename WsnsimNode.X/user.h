@@ -89,48 +89,34 @@ uint8_t ReadFifo(fifo * f, char * c);
 
 uint8_t WriteFifo(fifo * f, char c);
 
-fifo bufferSIM;
+fifo bufferSIM;                         // The fifo for the SIM receiver
 
 /* HY-SRF05 *******************************************************************/
-void TriggerHY(void);                   // Launch a measure 
-
-int EchoDuration(void);                 // Return the raw duration of the echo 
-
-double CalcDistance(int time);          // Return the distance in cm 
-
 void MeasureHY(void);                   // Launch the HY measurement routine 
 
-volatile double distance_cm;
+volatile double distance_cm;            // The result of the HY measure
 
 /* DS18B20 ********************************************************************/
-void InitializationSeqDS(void);
+void ResetDS(void);                     // Cancel all unfinished previous actions, could cause dataloss
 
-void Write1DS(void);
+void SendInstructionDS(uint8_t c);      // Launch the DS specific sending routine
 
-void Write0DS(void);
+void SkipRom(void);                     // Allow to skip the rom step
 
-void SendInstructionDS(uint8_t c);
+void ConvertT(void);                    // Launch a temperature measure
 
-void SkipRom(void);
+void ReadTemperature(void);             // Execute READSCRATCHPAD and store the result
 
-void ConvertT(void);
+uint8_t ReadDS(void);                   // Return the value given by the DS18B20
 
-void ReadTemperature(void);
+void MeasureDS(void);                   // Launch the DS measurement routine
 
-uint8_t ReadDS(void);
-
-void MeasureDS(void);
-
-volatile uint8_t temperatureDS[2];
+volatile uint8_t temperatureDS[2];      // The result of the DS measure
 
 /* DHT11 **********************************************************************/
-inline void StartSeqDHT(void);
+void MeasureDHT(void);                  // Launch the DHT measurement routine
 
-inline void ReadBitDHT(uint8_t * c);
-
-void MeasureDHT(void);
-
-volatile uint8_t DatasDHT[5];
+volatile uint8_t DatasDHT[5];           // The result of the DHT measure
 
 /* SIM800L ********************************************************************/
 

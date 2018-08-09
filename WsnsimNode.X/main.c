@@ -109,6 +109,8 @@ void main(void)
     
     while(1){
         MeasureDHT();
+        MeasureDS();
+        MeasureHY();
         __delay_ms(5000);
         
         i++;
