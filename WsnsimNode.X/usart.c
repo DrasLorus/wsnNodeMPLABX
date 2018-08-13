@@ -12,40 +12,33 @@
 void ResetFifo(fifo * f){
     f->ir = 0;
     f->iw = 0;
-    f->elts = 0;
 }
 
 uint8_t ReadFifo(fifo * f, char * c){
-    if(f->elts == 0){
+    if(f->iw == f->ir){
         return 0;
     }else{
-        *c = f->str[f->ir];
-        f->elts--;
-        if(f->ir > (FIFOSIZE - 2)){
+        *c = f->str[f->ir++];
+        if(f->ir > (FIFOSIZE - 1)){
             f->ir = 0;
-        }else{
-            f->ir += 1;
         }
         return 1;
     }
 }
 
 uint8_t WriteFifo(fifo * f, char c){
-    if(f->elts == FIFOSIZE){
+    if( (!(f->ir) && (f->iw == FIFOSIZE - 1)) || ((f->iw + 1) == f->ir)){
         return 0;
     }else{ 
-        f->str[f->iw] = c;
-        f->elts++;
-        if(f->iw > FIFOSIZE - 2){
+        f->str[f->iw++] = c;
+        if(f->iw > FIFOSIZE - 1){
             f->iw = 0;
-        }else{
-            f->iw += 1;
         }
         return 1;
     }
 }
 
-void InitUsart(uint8_t baudrate, bool hs){
+void InitUsart(uint16_t baudrate, bool hs){
     
     if(hs){
         BRGH  = 1;
@@ -55,7 +48,7 @@ void InitUsart(uint8_t baudrate, bool hs){
         SPBRG = VALUEBRG0(baudrate);
     }
     
-    TRISC |= 0x80;
+    TRISC = 0x80;
     
     SYNC  = 0;
     SPEN  = 1;
@@ -66,6 +59,15 @@ void InitUsart(uint8_t baudrate, bool hs){
     
     CREN  = 1;
     
+}
+
+uint8_t SendChar(char c){
+    if(TXIF){
+        TXREG = c;
+        return 1;
+    }else{
+        return 0;
+    }
 }
 
 void ReceiveChar(char * c){

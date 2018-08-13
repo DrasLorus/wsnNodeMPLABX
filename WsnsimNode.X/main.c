@@ -5,7 +5,7 @@
 
 #include "user.h"          /* User funct/params, such as InitApp */
 
-#define MODE MEASUREm
+#define MODE TRANSMITm
 
 /******************************************************************************/
 /* Main Program                                                               */
@@ -16,6 +16,8 @@
 #endif
 
 char buff;
+char s[32];
+uint8_t ind;
 
 void __interrupt() isr(void)
 {
@@ -40,6 +42,11 @@ void __interrupt() isr(void)
     else if(RCIF)
     {
         ReceiveChar(&buff);
+        s[ind++] = buff;
+        if(ind > 31){
+            ind = 0;
+            SETFF;
+        }
     }
     else
     {
@@ -74,13 +81,18 @@ void main(void)
     GIE = 1;
     PEIE = 1;
     
+    TRISC = 0x80;
+    RC6   = 0;
+    
     while(1)
     {
         RD1 = 0;
+        RC6 = 0;
         __delay_ms(1000);
         RD1 = 1;
+        RC6 = 1;
         __delay_ms(1000);
-    }
+    }      
 }
 #elif   MODE==IDLEm
 
@@ -124,7 +136,20 @@ void main(void)
 void main(void)
 {
     InitApp();
-    SyncPicSIM();
+    ind = 0;
+    uint8_t i = 0;
+    char oui = 'A';
+    
+    while(1){
+        while(!TXIF)
+            ;
+        SendChar(oui++);
+        if(FF){
+            i++;
+            oui = 'A'; //TODO /!\ HW FIFO!!!
+            CLRFF;
+        }
+    }
 }
 #elif   MODE==COMPLETEm
 

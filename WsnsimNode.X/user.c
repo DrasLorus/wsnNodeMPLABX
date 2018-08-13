@@ -23,7 +23,7 @@ void InitApp(void)
             
     /* Initialize peripherals */ 
     
-    
+    InitUsart( 9600, true);
     
     /* Enable interrupts */
     GIE = 1;
