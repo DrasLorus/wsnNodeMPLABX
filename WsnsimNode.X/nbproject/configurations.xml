@@ -6,6 +6,7 @@
                    projectFiles="true">
       <itemPath>system.h</itemPath>
       <itemPath>user.h</itemPath>
+      <itemPath>usart.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -14,6 +15,7 @@
       <itemPath>main.c</itemPath>
       <itemPath>system.c</itemPath>
       <itemPath>user.c</itemPath>
+      <itemPath>usart.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -24,6 +26,9 @@
     <itemPath>legal_disclaimer.txt</itemPath>
     <itemPath>project_information.txt</itemPath>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="XC8_PIC16F877A" type="2">
