@@ -15,6 +15,8 @@
 #define MODE DEFAULT
 #endif
 
+char buff;
+
 void __interrupt() isr(void)
 {
 #if MODE == TESTPICm
@@ -37,7 +39,7 @@ void __interrupt() isr(void)
     }
     else if(RCIF)
     {
-        ReceiveCharSIM(&bufferSIM);
+        ReceiveChar(&buff);
     }
     else
     {

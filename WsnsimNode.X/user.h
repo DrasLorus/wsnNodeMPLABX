@@ -8,8 +8,9 @@
 #include <xc.h>
 
 #include <stdint.h>         /* For uint8_t definition */
-#include <stdbool.h>  
+ 
 #include "system.h"
+#include "usart.h"
 
 #define TESTPICm    -1
 #define IDLEm       0
@@ -54,10 +55,6 @@
 #define CLRERDHT        flags.erdht = 0
 
 /* SIM800L ********************************************************************/
-#define TXSIM           RC6
-#define RXSIM           RC7
-#define FIFOSIZE        32
-#define BAUDRATE        9600
 #define CTRL_Z          26
 #define ESC             27
 
@@ -75,19 +72,6 @@ struct flag_struct{
     uint8_t fe:1;
     uint8_t uer:1;
 } flags;
-
-typedef struct FIFO {
-    char str[FIFOSIZE];
-    uint8_t iw;
-    uint8_t ir;
-    uint8_t elts;
-} fifo;
-
-void ResetFifo(fifo * f);
-
-uint8_t ReadFifo(fifo * f, char * c);
-
-uint8_t WriteFifo(fifo * f, char c);
 
 fifo bufferSIM;                         // The fifo for the SIM receiver
 
@@ -120,12 +104,12 @@ volatile uint8_t DatasDHT[5];           // The result of the DHT measure
 
 /* SIM800L ********************************************************************/
 
-void SyncPicSIM(void);
+/*void SyncPicSIM(void);
 
 void ReceiveCharSIM(fifo * f);
 
 void SendCommandSIM(char * command);
 
-void SendSmsSIM(char * numero, char * message);
+void SendSmsSIM(char * numero, char * message);*/
 
 #endif //USER_H

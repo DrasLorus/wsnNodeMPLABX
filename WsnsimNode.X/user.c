@@ -23,21 +23,11 @@ void InitApp(void)
             
     /* Initialize peripherals */ 
     
-    TRISC = 0x80;
-    TX9   = 0;
-    TXEN  = 0;
-    SYNC  = 0;
-    BRGH  = 1;
-    SPEN  = 1;
-    CREN  = 0;
-    ADDEN = 0;
     
-    SPBRG = 129;        /* value given by pic16f877a datasheet for 9600bd */
     
     /* Enable interrupts */
     GIE = 1;
     PEIE = 1;
-    RCIE = 1;
     
     /* Clear all flags */
     CLROOR;
@@ -49,44 +39,6 @@ void InitApp(void)
     
     ResetDS();
     
-}
-
-void ResetFifo(fifo * f){
-    f->ir = 0;
-    f->iw = 0;
-    f->elts = 0;
-}
-
-uint8_t ReadFifo(fifo * f, char * c){
-    if(f->elts == 0){
-        return 0;
-    }else{
-        *c = f->str[f->ir];
-        f->elts--;
-        if(f->ir > (FIFOSIZE - 2)){
-            f->ir = 0;
-        }else{
-            f->ir += 1;
-        }
-        CLRFF;
-        return 1;
-    }
-}
-
-uint8_t WriteFifo(fifo * f, char c){
-    if(f->elts == FIFOSIZE){
-        return 0;
-    }else{ 
-        f->str[f->iw] = c;
-        f->elts++;
-        if(f->iw > FIFOSIZE - 2){
-            f->iw = 0;
-        }else{
-            f->iw += 1;
-        }
-        CLRFE;
-        return 1;
-    }
 }
 
 /******************************************************************************/
@@ -344,7 +296,7 @@ void MeasureDHT(void){
 /******************************************************************************/
 /* SIM800L ********************************************************************/
 /******************************************************************************/
-void SendCharSIM(char c){
+/* void SendCharSIM(char c){
     while(!TXIF)
         ;
     TXREG = c;
@@ -428,4 +380,4 @@ void SendSmsSIM(char * numero, char * message){
     SendCharSIM(CTRL_Z);
     SendCharSIM('\r');
         
-}
+} */
