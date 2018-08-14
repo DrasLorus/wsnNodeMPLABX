@@ -135,22 +135,24 @@ void main(void)
 void main(void)
 {
     InitApp();
-    char s[64];
-    s[63] = 0;
+    char temp[64];
+    temp[63] = 0;
     uint8_t ind = 0;
-    
+    AutobaudSIM();
     while(1){
         if(OERR){
             CREN = 0;
             ResetFifo(&bufferSIM);
             CLRFF;
             SETFE;
-            CREN = 1;
+            
         }
-        AutobaudSIM();
-        __delay_ms(1000);
+
+        __delay_ms(6000);       
+        //SendSmsSIM("0947323580","HELLO");
+        //__delay_ms(10000);
         if(!FE){
-            if(!ReadFifo(&bufferSIM, &(s[ind]))){
+            if(!ReadFifo(&bufferSIM, &(temp[ind]))){
                 SETFE;
             }else{
                 CLRFF;

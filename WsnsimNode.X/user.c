@@ -23,7 +23,7 @@ void InitApp(void)
             
     /* Initialize peripherals */ 
     ResetFifo(&bufferSIM);
-    InitUsart( 9600, true);
+    InitUsart( 57600, true);
     
     /* Enable interrupts */
     GIE = 1;
@@ -314,11 +314,12 @@ void AutobaudSIM(void){
         ;
     if(!SendChar('\r'))
         SETTXER;
+    CREN = 1;
 }
 
 void SendSmsSIM(char * numero, char * message){       
     SendCommandSIM("+CMFG=1");
-    SendCommandSIM("+CSCS=\"GSM\"");
+    SendCommandSIM("+CSCS=\"IRA\"");
     __delay_ms(50);
     if(!SendString("AT"))
         SETTXER;
