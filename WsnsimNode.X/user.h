@@ -55,6 +55,9 @@
 #define CLRERDHT        flags.erdht = 0
 
 /* SIM800L ********************************************************************/
+#define TXER             (flags.txer)             // Transmission ERror flag
+#define SETTXER          flags.txer = 1
+#define CLRTXER          flags.txer = 0
 #define CTRL_Z          26
 #define ESC             27
 
@@ -70,6 +73,7 @@ struct flag_struct{
     uint8_t erdht:1;
     uint8_t ff:1;
     uint8_t fe:1;
+    uint8_t txer:1;
     uint8_t uer:1;
 } flags;
 
@@ -104,12 +108,10 @@ volatile uint8_t DatasDHT[5];           // The result of the DHT measure
 
 /* SIM800L ********************************************************************/
 
-/*void SyncPicSIM(void);
-
-void ReceiveCharSIM(fifo * f);
+void AutobaudSIM(void);
 
 void SendCommandSIM(char * command);
 
-void SendSmsSIM(char * numero, char * message);*/
+void SendSmsSIM(char * numero, char * message);
 
 #endif //USER_H

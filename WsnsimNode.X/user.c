@@ -22,7 +22,7 @@ void InitApp(void)
     TRISB = 0x05;
             
     /* Initialize peripherals */ 
-    
+    ResetFifo(&bufferSIM);
     InitUsart( 9600, true);
     
     /* Enable interrupts */
@@ -296,88 +296,46 @@ void MeasureDHT(void){
 /******************************************************************************/
 /* SIM800L ********************************************************************/
 /******************************************************************************/
-/* void SendCharSIM(char c){
+void SendCommandSIM(char * command){
+    if(!SendString("AT"))
+        SETTXER;
+    if(!SendString(command))
+        SETTXER;
     while(!TXIF)
         ;
-    TXREG = c;
+    if(!SendChar('\r'))
+        SETTXER;
 }
 
-void SendStringSIM(char * s){
-    uint8_t i = 0;
-    while(*(s + i)){
-        SendCharSIM(*(s + i));
-        i++;
-    }
-}
-
-void ReceiveCharSIM(fifo * f){
-    if(!WriteFifo(f, (char) RCREG))
-        SETFF;
-}
-
-uint8_t ReceiveStringSIM(fifo * f, char s[], uint8_t size){
-    if((size > FIFOSIZE) || FE || (f->elts < size)){
-        return 0;
-    }
-    uint8_t i = 0;
-    while(i < size){
-        if(!ReadFifo( f, (s+i))){
-                SETFE;
-                break;
-        }       
-        i++;
-    }
-    s[size] = '\0';
-    return 1;
-}
-
-void SendCommandSIM(char * command){
-    SendStringSIM("AT");
-    SendStringSIM(command);
-    SendCharSIM('\r');
-}
-
-void SyncPicSIM(void){
-    SendStringSIM("AT");
-    SendCharSIM('\r');
-    
-    CREN = 1;
-    while(bufferSIM.elts < 6)
-        ;  
-    CREN = 0;
-    
-    char s[7];
-    
-    ReceiveStringSIM(&bufferSIM, s, 6);
-    if( !(s[2] == 'O' && s[3] == 'K' && s[5] == 0)){       
-        SETUER;
-    }
+void AutobaudSIM(void){
+    if(!SendString("AT"))
+        SETTXER;
+    while(!TXIF)
+        ;
+    if(!SendChar('\r'))
+        SETTXER;
 }
 
 void SendSmsSIM(char * numero, char * message){       
     SendCommandSIM("+CMFG=1");
     SendCommandSIM("+CSCS=\"GSM\"");
+    __delay_ms(50);
+    if(!SendString("AT"))
+        SETTXER;
+    if(!SendString("+CMGS=\""))
+        SETTXER;
+    if(!SendString(numero))
+        SETTXER;
+    if(!SendString("\"\r"))
+        SETTXER;
 
-    char s[41];
-
-    s[0] = '+';
-    s[1] = 'C';
-    s[2] = 'M';
-    s[3] = 'G';
-    s[4] = 'S';
-    s[5] = '=';
-    s[6] = '\"';
-    
-    uint8_t i = 0;
-    while(*(numero+i) && (i < 32)){
-        s[7+i] = *(numero+i);
-        i++;
-    }
-    s[i+7] = '\"';
-    s[i+8] = 0;
-    SendCommandSIM(s);
-    SendStringSIM(message);
-    SendCharSIM(CTRL_Z);
-    SendCharSIM('\r');
-        
-} */
+    SendString(message);
+    while(!TXIF)
+        ;
+    if(!SendChar(CTRL_Z))
+        SETTXER;
+    while(!TXIF)
+        ;
+    if(!SendChar('\r'))
+        SETTXER;
+} 

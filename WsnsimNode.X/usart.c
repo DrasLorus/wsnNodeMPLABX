@@ -27,7 +27,9 @@ uint8_t ReadFifo(fifo * f, char * c){
 }
 
 uint8_t WriteFifo(fifo * f, char c){
-    if( (!(f->ir) && (f->iw == FIFOSIZE - 1)) || ((f->iw + 1) == f->ir)){
+    uint8_t b;
+    b = (f->ir == 0) && (f->iw == FIFOSIZE - 1);
+    if( b || ((f->iw + 1) == f->ir)){
         return 0;
     }else{ 
         f->str[f->iw++] = c;
@@ -70,6 +72,23 @@ uint8_t SendChar(char c){
     }
 }
 
-void ReceiveChar(char * c){
-    *c = RCREG;
+uint8_t SendString(char * s){
+    uint8_t i = 0;
+    while(*(s + i)){
+        while(!TXIF)
+            ;
+        if(!SendChar(*(s + i)))
+            return 0;
+        i++;
+    }
+    return 1;
+}
+
+uint8_t ReceiveChar(char * c){
+    if(RCIF){
+        *c = RCREG;
+        return 1;
+    }else{
+        return 0;
+    }
 }

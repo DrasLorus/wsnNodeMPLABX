@@ -41,12 +41,11 @@ void __interrupt() isr(void)
     }
     else if(RCIF)
     {
-        ReceiveChar(&buff);
-        s[ind++] = buff;
-        if(ind > 31){
-            ind = 0;
+        if(!ReceiveChar(&buff))
+            SETUER;
+        if(!WriteFifo(&bufferSIM, buff))
             SETFF;
-        }
+        CLRFE;
     }
     else
     {
@@ -136,18 +135,29 @@ void main(void)
 void main(void)
 {
     InitApp();
-    ind = 0;
-    uint8_t i = 0;
-    char oui = 'A';
+    char s[64];
+    s[63] = 0;
+    uint8_t ind = 0;
     
     while(1){
-        while(!TXIF)
-            ;
-        SendChar(oui++);
-        if(FF){
-            i++;
-            oui = 'A'; //TODO /!\ HW FIFO!!!
+        if(OERR){
+            CREN = 0;
+            ResetFifo(&bufferSIM);
             CLRFF;
+            SETFE;
+            CREN = 1;
+        }
+        AutobaudSIM();
+        __delay_ms(1000);
+        if(!FE){
+            if(!ReadFifo(&bufferSIM, &(s[ind]))){
+                SETFE;
+            }else{
+                CLRFF;
+                ind++;
+            }
+            if(ind > 62)
+                ind = 0;
         }
     }
 }

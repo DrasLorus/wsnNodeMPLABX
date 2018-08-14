@@ -48,7 +48,7 @@
 
 // TODO Insert declarations
 
-#define FIFOSIZE        32
+#define FIFOSIZE        64
 #define VALUEBRG0(br)   (uint8_t)(SYS_FREQ/(64*(br+1)))
 #define VALUEBRG1(br)   (uint8_t)(SYS_FREQ/(16*(br+1)))
 
@@ -60,7 +60,7 @@ typedef struct FIFO {
 
 // Comment a function and leverage automatic documentation with slash star star
 /**
-    <p><b>Function prototype: void InitUsart(uint8_t baudrate);</b></p>
+    <p><b>Function prototype: void InitUsart(uint16_t baudrate);</b></p>
   
     <p><b>Summary: Initialyse the transiever and the baudrate generator </b></p>
 
@@ -109,8 +109,10 @@ uint8_t WriteFifo(fifo * f, char c);
 
 uint8_t SendChar(char c);
 
+uint8_t SendString(char * s);
+
 /**
-    <p><b>Function prototype: void ReceiveChar(char * c);</b></p>
+    <p><b>Function prototype: uint8_t ReceiveChar(char * c);</b></p>
   
     <p><b>Summary: Receive a character</b></p>
 
@@ -131,7 +133,7 @@ uint8_t SendChar(char c);
 
     <p><b>Remarks:</b></p>
 **/
-void ReceiveChar(char * c);
+uint8_t ReceiveChar(char * c);
 
 #endif	/* XC_HEADER_TEMPLATE_H */
 
