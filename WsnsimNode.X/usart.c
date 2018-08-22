@@ -9,86 +9,118 @@
 #include <xc.h>
 #include "usart.h"
 
-void ResetFifo(fifo * f){
-    f->ir = 0;
-    f->iw = 0;
-}
-
-uint8_t ReadFifo(fifo * f, char * c){
-    if(f->iw == f->ir){
-        return 0;
-    }else{
-        *c = f->str[f->ir++];
-        if(f->ir > (FIFOSIZE - 1)){
-            f->ir = 0;
-        }
-        return 1;
-    }
-}
-
-uint8_t WriteFifo(fifo * f, char c){
-    uint8_t b;
-    b = (f->ir == 0) && (f->iw == FIFOSIZE - 1);
-    if( b || ((f->iw + 1) == f->ir)){
-        return 0;
-    }else{ 
-        f->str[f->iw++] = c;
-        if(f->iw > FIFOSIZE - 1){
-            f->iw = 0;
-        }
-        return 1;
-    }
-}
-
-void InitUsart(uint16_t baudrate, bool hs){
+void InitUsart(USART_BAUD baudrate){
     
-    if(hs){
-        BRGH  = 1;
-        SPBRG = VALUEBRG1(baudrate);
-    }else{
-        BRGH  = 0;
-        SPBRG = VALUEBRG0(baudrate);
-    }
+    TXIE = 0;
+    RCIE = 0;
     
+    RCSTA = 0;
+    TXSTA = 0;
+    
+    RX9   = 0;
+    TX9   = 0;
+    ADDEN = 0;
+        
     TRISC = 0x80;
     
+    switch (baudrate)
+    {
+        case USART_BAUD_MAXIMUM:
+            SPBRG = SPBRG_AT_MAXIMUM;
+            BRGH  = 1; /* Setting high speed */
+            break;
+        case USART_BAUD_115200:
+            SPBRG = SPBRG_AT_115200;
+            BRGH  = BRGH_AT_115200;
+            break;
+        case USART_BAUD_57600:
+            SPBRG = SPBRG_AT_57600;
+            BRGH  = BRGH_AT_57600;
+            break;
+        case USART_BAUD_38400:
+            SPBRG = SPBRG_AT_38400;
+            BRGH  = BRGH_AT_38400;
+            break;
+        case USART_BAUD_19200:
+            SPBRG = SPBRG_AT_19200;
+            BRGH  = BRGH_AT_19200;
+            break;
+        case USART_BAUD_9600:
+            SPBRG = SPBRG_AT_9600;
+            BRGH  = BRGH_AT_9600;
+            break;
+        /*case USART_BAUD_4800:
+            SPBRG = SPBRG_AT_4800;
+            BRGH  = BRGH_AT_4800;
+            break;*/
+        case USART_BAUD_2400:
+            SPBRG = SPBRG_AT_2400;
+            BRGH  = BRGH_AT_2400;
+            break;
+        /*case USART_BAUD_1200:
+            SPBRG = SPBRG_AT_1200;
+            BRGH  = BRGH_AT_1200;
+            break;*/
+        default:
+            /* default is the slowest baud rate */
+            SPBRG = 0xFF;
+            BRGH = 0;
+            break;
+    }
+    
     SYNC  = 0;
-    SPEN  = 1;
-    
-    TXEN  = 1;
-    
-    RCIE  = 1;
     
     CREN  = 1;
+    TXEN  = 1;
+    SPEN  = 1;   
     
+    RCREG;
+    RCREG;
+    RCREG;
 }
 
-uint8_t SendChar(char c){
-    if(TXIF){
-        TXREG = c;
-        return 1;
-    }else{
-        return 0;
+void SendChar(unsigned char c){
+    while(!TX_RDY)
+        ;
+    TXREG = c;
+}
+
+void SendString(unsigned char * s){
+    if(s){
+        while(*s){
+            SendChar(*s++);
+        }
     }
 }
 
-uint8_t SendString(char * s){
-    uint8_t i = 0;
-    while(*(s + i)){
-        while(!TXIF)
-            ;
-        if(!SendChar(*(s + i)))
-            return 0;
-        i++;
-    }
-    return 1;
-}
 
-uint8_t ReceiveChar(char * c){
-    if(RCIF){
-        *c = RCREG;
-        return 1;
-    }else{
-        return 0;
+uint8_t ReceiveChar(unsigned char * c){
+    if(RX_RDY){
+        uint8_t rxerr = 0;
+        
+        if(OERR){
+            rxerr = 1;
+            CREN = 0; /* reset receiver */
+            CREN = 1;
+            RCREG;
+            RCREG;
+            RCREG;
+            if(OERRcounter < 255) 
+                OERRcounter++;
+        }
+        
+        if (FERR) {
+            rxerr = 1;
+            RCREG; /* Discard character with framing error */
+            if(FERRcounter < 255) 
+                FERRcounter++;
+        } 
+        
+        if(!rxerr){
+            *c = RCREG;
+            return 1;
+        }       
     }
+    return 0;
+    
 }

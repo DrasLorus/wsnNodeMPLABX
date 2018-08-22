@@ -58,6 +58,7 @@
 #define TXER             (flags.txer)             // Transmission ERror flag
 #define SETTXER          flags.txer = 1
 #define CLRTXER          flags.txer = 0
+#define CR              0x0D
 #define CTRL_Z          26
 #define ESC             27
 
@@ -67,7 +68,7 @@
 
 void InitApp(void);                 // I/O and Peripheral Initialization 
 
-struct flag_struct{
+typedef struct flag_struct{
     uint8_t oor:1;
     uint8_t eroi:1;
     uint8_t erdht:1;
@@ -75,9 +76,9 @@ struct flag_struct{
     uint8_t fe:1;
     uint8_t txer:1;
     uint8_t uer:1;
-} flags;
+} flag_t;
 
-fifo bufferSIM;                         // The fifo for the SIM receiver
+volatile flag_t flags;
 
 /* HY-SRF05 *******************************************************************/
 void MeasureHY(void);                   // Launch the HY measurement routine 
@@ -110,8 +111,8 @@ volatile uint8_t DatasDHT[5];           // The result of the DHT measure
 
 void AutobaudSIM(void);
 
-void SendCommandSIM(char * command);
+void SendCommandSIM(unsigned char * command);
 
-void SendSmsSIM(char * numero, char * message);
+void SendSmsSIM(unsigned char * numero, unsigned char * message);
 
 #endif //USER_H

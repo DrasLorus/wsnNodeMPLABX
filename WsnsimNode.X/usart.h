@@ -37,30 +37,74 @@
 #include <stdbool.h>
 
 #ifndef SYSTEM_H
-
-#define SYS_FREQ      20000000
-
+#define _XTAL_FREQ      20000000
 #else
-
 #include "system.h"
-
 #endif
 
-// TODO Insert declarations
 
-#define FIFOSIZE        64
-#define VALUEBRG0(br)   (uint8_t)(SYS_FREQ/(64*(br+1)))
-#define VALUEBRG1(br)   (uint8_t)(SYS_FREQ/(16*(br+1)))
+#define FIFOSIZE            64
+#define TX_RDY              (TRMT!=0?1:0)
+#define RX_RDY              (RCIF!=0?1:0)
 
-typedef struct FIFO {
+#define SPBRG_AT_MAXIMUM 0
+    
+#define BRGH_AT_115200 (1)
+#define BRGH_AT_57600  (1)
+#define BRGH_AT_38400  (1)
+#define BRGH_AT_19200  (1)
+#define BRGH_AT_9600   (1)
+#define BRGH_AT_4800   (1)
+#define BRGH_AT_2400   (0)
+#define BRGH_AT_1200   (0)
+
+#define SPBRG_AT_115200  (_XTAL_FREQ/((64UL>>(2UL*BRGH_AT_115200)) * 115200UL) - 1)
+#if !((SPBRG_AT_115200 > 0) && (SPBRG_AT_115200 < 256))
+#error Baud rate 115200 invalid
+#endif
+#define SPBRG_AT_57600  (_XTAL_FREQ/((64UL>>(2UL*BRGH_AT_57600)) * 57600UL) - 1)
+#if !((SPBRG_AT_57600 > 0) && (SPBRG_AT_57600 < 256))
+#error Baud rate 57600 invalid
+#endif
+#define SPBRG_AT_38400  (_XTAL_FREQ/((64UL>>(2UL*BRGH_AT_38400)) * 38400UL) - 1)
+#if !((SPBRG_AT_38400 > 0) && (SPBRG_AT_38400 < 256))
+#error Baud rate 38400 invalid
+#endif
+#define SPBRG_AT_19200  (_XTAL_FREQ/((64UL>>(2UL*BRGH_AT_19200)) * 19200UL) - 1)
+#if !((SPBRG_AT_19200 > 0) && (SPBRG_AT_19200 < 256))
+#error Baud rate 19200 invalid
+#endif
+#define SPBRG_AT_9600   (_XTAL_FREQ/((64UL>>(2UL*BRGH_AT_9600)) *  9600UL) - 1)
+#if !((SPBRG_AT_9600 > 0) && (SPBRG_AT_9600 < 256))
+#error Baud rate 9600 invalid
+#endif
+/*#define SPBRG_AT_4800   (_XTAL_FREQ/((64UL>>(2UL*BRGH_AT_4800)) *  4800UL) - 1)
+#if !((SPBRG_AT_4800 > 0) && (SPBRG_AT_4800 < 256))
+#error Baud rate 4800 invalid
+#endif*/
+#define SPBRG_AT_2400   (_XTAL_FREQ/((64UL>>(2UL*BRGH_AT_2400)) *  2400UL) - 1)
+#if !((SPBRG_AT_2400 > 0) && (SPBRG_AT_2400 < 256))
+#error Baud rate 2400 invalid
+#endif
+/*#define SPBRG_AT_1200   (_XTAL_FREQ/((64UL>>(2UL*BRGH_AT_1200)) *  1200UL) - 1)
+#if !((SPBRG_AT_1200 > 0) && (SPBRG_AT_1200 < 256))
+#error Baud rate 1200 invalid
+#endif*/
+
+typedef enum eUSART_BAUD {USART_BAUD_NONE=0,USART_BAUD_MAXIMUM,USART_BAUD_115200,USART_BAUD_57600,USART_BAUD_38400,USART_BAUD_19200,USART_BAUD_9600/*,USART_BAUD_4800*/,USART_BAUD_2400/*,USART_BAUD_1200*/} USART_BAUD;
+
+/*typedef struct FIFO {
     char str[FIFOSIZE];
     uint8_t iw;
     uint8_t ir;
 } fifo;
+*/
+volatile uint8_t OERRcounter;
+volatile uint8_t FERRcounter;
 
 // Comment a function and leverage automatic documentation with slash star star
 /**
-    <p><b>Function prototype: void InitUsart(uint16_t baudrate);</b></p>
+    <p><b>Function prototype: void InitUsart(USART_BAUD baudrate);</b></p>
   
     <p><b>Summary: Initialyse the transiever and the baudrate generator </b></p>
 
@@ -79,37 +123,11 @@ typedef struct FIFO {
 
     <p><b>Remarks:</b></p>
 **/
-void InitUsart(uint16_t baudrate, bool hs);
+void InitUsart(USART_BAUD baudrate);
 
-/**
-    <p><b>Function prototype: void ResetFifo(fifo * f);</b></p>
-  
-    <p><b>Summary: Initialyse the transiever and the baudrate generator </b></p>
+void SendChar(unsigned char c);
 
-    <p><b>Description:</b></p>
-
-    <p><b>Precondition:</b></p>
-
-    <p><b>Parameters:</b></p>
-
-    <p><b>Returns:</b></p>
-
-    <p><b>Example:</b></p>
-    <code>
- 
-    </code>
-
-    <p><b>Remarks:</b></p>
-**/
-void ResetFifo(fifo * f);
-
-uint8_t ReadFifo(fifo * f, char * c);
-
-uint8_t WriteFifo(fifo * f, char c);
-
-uint8_t SendChar(char c);
-
-uint8_t SendString(char * s);
+void SendString(unsigned char * s);
 
 /**
     <p><b>Function prototype: uint8_t ReceiveChar(char * c);</b></p>
@@ -133,7 +151,7 @@ uint8_t SendString(char * s);
 
     <p><b>Remarks:</b></p>
 **/
-uint8_t ReceiveChar(char * c);
+uint8_t ReceiveChar(unsigned char * c);
 
 #endif	/* XC_HEADER_TEMPLATE_H */
 

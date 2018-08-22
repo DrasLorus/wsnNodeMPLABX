@@ -15,8 +15,9 @@
 #define MODE DEFAULT
 #endif
 
-char buff;
-char s[32];
+volatile unsigned char * buff;
+volatile unsigned char text[64];
+
 uint8_t ind;
 
 void __interrupt() isr(void)
@@ -41,11 +42,13 @@ void __interrupt() isr(void)
     }
     else if(RCIF)
     {
-        if(!ReceiveChar(&buff))
+        if(!ReceiveChar((unsigned char *)buff))
             SETUER;
-        if(!WriteFifo(&bufferSIM, buff))
-            SETFF;
-        CLRFE;
+        if(buff - text < 64){
+            buff++;
+        }else{
+            buff = text;
+        }
     }
     else
     {
@@ -134,33 +137,32 @@ void main(void)
     
 void main(void)
 {
-    InitApp();
-    char temp[64];
-    temp[63] = 0;
-    uint8_t ind = 0;
-    AutobaudSIM();
-    while(1){
-        if(OERR){
-            CREN = 0;
-            ResetFifo(&bufferSIM);
-            CLRFF;
-            SETFE;
-            
-        }
+    buff = text;
+    
+    /*
+    TRISC = 0x80;
 
-        __delay_ms(6000);       
-        //SendSmsSIM("0947323580","HELLO");
-        //__delay_ms(10000);
-        if(!FE){
-            if(!ReadFifo(&bufferSIM, &(temp[ind]))){
-                SETFE;
-            }else{
-                CLRFF;
-                ind++;
-            }
-            if(ind > 62)
-                ind = 0;
-        }
+    while(1){
+        __delay_ms(1000);   
+        RC6 = 1;
+        __delay_ms(1000);
+        RC6 = 0;
+    }
+    */
+    
+    InitApp();
+
+    CREN = 1;
+    SendString((unsigned char*)"AT\r\n");
+    __delay_ms(1000);   
+    SendCommandSIM((unsigned char *)"+CMFG=1");
+    __delay_ms(1000);
+    while(1){
+        
+        __delay_ms(1);
+        SendString((unsigned char*)"AT\r\n");       
+        __delay_ms(100);
+        
     }
 }
 #elif   MODE==COMPLETEm
@@ -181,6 +183,7 @@ void main(void)
         MeasureHY();
         MeasureDS();
         MeasureDHT();
+        SendSmsSim(dufkjh);
         asm("SLEEP");
     }
 }   

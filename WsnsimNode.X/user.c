@@ -22,9 +22,8 @@ void InitApp(void)
     TRISB = 0x05;
             
     /* Initialize peripherals */ 
-    ResetFifo(&bufferSIM);
-    InitUsart( 57600, true);
-    
+    InitUsart(USART_BAUD_9600);
+    RCIE = 1;
     /* Enable interrupts */
     GIE = 1;
     PEIE = 1;
@@ -296,47 +295,26 @@ void MeasureDHT(void){
 /******************************************************************************/
 /* SIM800L ********************************************************************/
 /******************************************************************************/
-void SendCommandSIM(char * command){
-    if(!SendString("AT"))
-        SETTXER;
-    if(!SendString(command))
-        SETTXER;
-    while(!TXIF)
-        ;
-    if(!SendChar('\r'))
-        SETTXER;
+void SendCommandSIM(unsigned char * command){
+    SendString((unsigned char *)"AT");
+    SendString(command);
+    SendString((unsigned char *)"\r\n");
 }
 
 void AutobaudSIM(void){
-    if(!SendString("AT"))
-        SETTXER;
-    while(!TXIF)
-        ;
-    if(!SendChar('\r'))
-        SETTXER;
-    CREN = 1;
+    SendString((unsigned char *)"AT\r\n");  
 }
 
-void SendSmsSIM(char * numero, char * message){       
-    SendCommandSIM("+CMFG=1");
-    SendCommandSIM("+CSCS=\"IRA\"");
-    __delay_ms(50);
-    if(!SendString("AT"))
-        SETTXER;
-    if(!SendString("+CMGS=\""))
-        SETTXER;
-    if(!SendString(numero))
-        SETTXER;
-    if(!SendString("\"\r"))
-        SETTXER;
-
+void SendSmsSIM(unsigned char * numero, unsigned char * message){       
+    SendCommandSIM((unsigned char *)"+CMFG=1");
+    __delay_ms(1000);
+    SendCommandSIM((unsigned char *)"+CSCS=\"GSM\"");
+    __delay_ms(1000);
+    SendString((unsigned char *)"AT+CMGS=\"");
+    SendString(numero);
+    SendString((unsigned char *)"\"\r\n");
+    __delay_ms(1000);
     SendString(message);
-    while(!TXIF)
-        ;
-    if(!SendChar(CTRL_Z))
-        SETTXER;
-    while(!TXIF)
-        ;
-    if(!SendChar('\r'))
-        SETTXER;
+    SendChar(CTRL_Z);
+    SendString((unsigned char *)"\r\n");
 } 
