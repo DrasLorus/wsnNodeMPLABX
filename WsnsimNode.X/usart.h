@@ -125,9 +125,9 @@ volatile uint8_t FERRcounter;
 **/
 void InitUsart(USART_BAUD baudrate);
 
-void SendChar(unsigned char c);
+void SendChar(char c);
 
-void SendString(unsigned char * s);
+void SendString(char * s);
 
 /**
     <p><b>Function prototype: uint8_t ReceiveChar(char * c);</b></p>
@@ -151,7 +151,7 @@ void SendString(unsigned char * s);
 
     <p><b>Remarks:</b></p>
 **/
-uint8_t ReceiveChar(unsigned char * c);
+uint8_t ReceiveChar(char * c);
 
 #endif	/* XC_HEADER_TEMPLATE_H */
 

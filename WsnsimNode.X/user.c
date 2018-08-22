@@ -32,8 +32,6 @@ void InitApp(void)
     CLROOR;
     CLREROI;
     CLRERDHT;
-    CLRFF;
-    CLRFE;
     CLRUER;
     
     ResetDS();
@@ -295,26 +293,28 @@ void MeasureDHT(void){
 /******************************************************************************/
 /* SIM800L ********************************************************************/
 /******************************************************************************/
-void SendCommandSIM(unsigned char * command){
-    SendString((unsigned char *)"AT");
+void SendCommandSIM(char * command){
+    SendString("AT");
     SendString(command);
-    SendString((unsigned char *)"\r\n");
+    SendString("\r\n");
 }
 
 void AutobaudSIM(void){
-    SendString((unsigned char *)"AT\r\n");  
+    SendString("AT\r\n");  
 }
 
-void SendSmsSIM(unsigned char * numero, unsigned char * message){       
-    SendCommandSIM((unsigned char *)"+CMFG=1");
+void SendSmsSIM(char * numero, char * message){       
+    SendCommandSIM("+CMFG=1");
     __delay_ms(1000);
-    SendCommandSIM((unsigned char *)"+CSCS=\"GSM\"");
+    SendCommandSIM("+CSMP=17,167,2,0");
     __delay_ms(1000);
-    SendString((unsigned char *)"AT+CMGS=\"");
+    SendCommandSIM("+CSCS=\"GSM\"");
+    __delay_ms(1000);
+    SendString("AT+CMGS=\"");
     SendString(numero);
-    SendString((unsigned char *)"\"\r\n");
+    SendString("\"\r\n");
     __delay_ms(1000);
     SendString(message);
     SendChar(CTRL_Z);
-    SendString((unsigned char *)"\r\n");
+    //SendString("\r\n");
 } 

@@ -21,15 +21,9 @@
 
 #define DEFAULT     TESTPICm
 
-#define FF              (flags.ff)             // Fifo Full flag
-#define SETFF           flags.ff = 1
-#define CLRFF           flags.ff = 0
-#define FE              (flags.fe)             // Fifo Empty flag
-#define SETFE           flags.fe = 1
-#define CLRFE           flags.fe = 0
-#define UER             (flags.fe)             // Unknown ERror flag
-#define SETUER          flags.fe = 1
-#define CLRUER          flags.fe = 0
+#define UER             (flags.uer)             // Unknown ERror flag
+#define SETUER          flags.uer = 1
+#define CLRUER          flags.uer = 0
 
 /* HY-SRF05 *******************************************************************/
 #define ECHO            RE1
@@ -55,11 +49,10 @@
 #define CLRERDHT        flags.erdht = 0
 
 /* SIM800L ********************************************************************/
-#define TXER             (flags.txer)             // Transmission ERror flag
-#define SETTXER          flags.txer = 1
-#define CLRTXER          flags.txer = 0
-#define CR              0x0D
-#define CTRL_Z          26
+#define CR              0xd //0x0D
+#define LF              0xa //0x0A
+#define SUB             26
+#define CTRL_Z          SUB
 #define ESC             27
 
 /******************************************************************************/
@@ -72,9 +65,6 @@ typedef struct flag_struct{
     uint8_t oor:1;
     uint8_t eroi:1;
     uint8_t erdht:1;
-    uint8_t ff:1;
-    uint8_t fe:1;
-    uint8_t txer:1;
     uint8_t uer:1;
 } flag_t;
 
@@ -111,8 +101,8 @@ volatile uint8_t DatasDHT[5];           // The result of the DHT measure
 
 void AutobaudSIM(void);
 
-void SendCommandSIM(unsigned char * command);
+void SendCommandSIM(char * command);
 
-void SendSmsSIM(unsigned char * numero, unsigned char * message);
+void SendSmsSIM(char * numero, char * message);
 
 #endif //USER_H

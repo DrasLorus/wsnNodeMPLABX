@@ -15,8 +15,8 @@
 #define MODE DEFAULT
 #endif
 
-volatile unsigned char * buff;
-volatile unsigned char text[64];
+volatile char * buff;
+volatile char text[64];
 
 uint8_t ind;
 
@@ -42,10 +42,11 @@ void __interrupt() isr(void)
     }
     else if(RCIF)
     {
-        if(!ReceiveChar((unsigned char *)buff))
+        if(!ReceiveChar((char *) buff))
             SETUER;
         if(buff - text < 64){
-            buff++;
+            if((*buff != CR) && (*buff != LF))
+                buff++;
         }else{
             buff = text;
         }
@@ -152,16 +153,16 @@ void main(void)
     
     InitApp();
 
-    CREN = 1;
-    SendString((unsigned char*)"AT\r\n");
+    AutobaudSIM();
     __delay_ms(1000);   
-    SendCommandSIM((unsigned char *)"+CMFG=1");
+    //SendCommandSIM("+CMFG=1");
     __delay_ms(1000);
     while(1){
         
         __delay_ms(1);
-        SendString((unsigned char*)"AT\r\n");       
-        __delay_ms(100);
+        AutobaudSIM();
+        //SendSmsSIM("+84947323580","Hello");      
+        __delay_ms(10000);
         
     }
 }

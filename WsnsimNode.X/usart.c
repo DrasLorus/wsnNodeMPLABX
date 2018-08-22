@@ -79,13 +79,13 @@ void InitUsart(USART_BAUD baudrate){
     RCREG;
 }
 
-void SendChar(unsigned char c){
+void SendChar(char c){
     while(!TX_RDY)
         ;
     TXREG = c;
 }
 
-void SendString(unsigned char * s){
+void SendString(char * s){
     if(s){
         while(*s){
             SendChar(*s++);
@@ -94,7 +94,7 @@ void SendString(unsigned char * s){
 }
 
 
-uint8_t ReceiveChar(unsigned char * c){
+uint8_t ReceiveChar(char * c){
     if(RX_RDY){
         uint8_t rxerr = 0;
         
