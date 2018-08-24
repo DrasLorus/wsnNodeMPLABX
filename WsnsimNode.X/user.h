@@ -55,6 +55,17 @@
 #define CTRL_Z          SUB
 #define ESC             27
 
+#define ACK             (flags.ack)
+#define SETACK          flags.ack = 1
+#define CLRACK          flags.ack =0
+
+#define DS_H            17
+#define DS_T            (DS_H+1)
+#define DHT_RH_T        28
+#define DHT_T_H         33
+#define DHT_T_T         (DHT_T_H+1)
+
+
 /******************************************************************************/
 /* User Function Prototypes                                                   */
 /******************************************************************************/
@@ -66,9 +77,13 @@ typedef struct flag_struct{
     uint8_t eroi:1;
     uint8_t erdht:1;
     uint8_t uer:1;
+    uint8_t ack:1;
 } flag_t;
 
+typedef enum eSensors{DS, DHT11_H, DHT11_T} sensors;
+
 volatile flag_t flags;
+volatile char sms[] = "HY: 000,0cm /DS: 000C /DHT: 00%H 000C";
 
 /* HY-SRF05 *******************************************************************/
 void MeasureHY(void);                   // Launch the HY measurement routine 
@@ -105,4 +120,5 @@ void SendCommandSIM(char * command);
 
 void SendSmsSIM(char * numero, char * message);
 
+void ConvertMeasureToStr(void);
 #endif //USER_H

@@ -5,7 +5,7 @@
 
 #include "user.h"          /* User funct/params, such as InitApp */
 
-#define MODE TRANSMITm
+#define MODE COMPLETEm
 
 /******************************************************************************/
 /* Main Program                                                               */
@@ -16,9 +16,7 @@
 #endif
 
 volatile char * buff;
-volatile char text[64];
-
-uint8_t ind;
+volatile char text[32];
 
 void __interrupt() isr(void)
 {
@@ -44,9 +42,18 @@ void __interrupt() isr(void)
     {
         if(!ReceiveChar((char *) buff))
             SETUER;
-        if(buff - text < 64){
-            if((*buff != CR) && (*buff != LF))
+        if(buff - text < 32){
+            if((*buff != CR) && (*buff != LF)){
                 buff++;
+            }else if(*buff == LF){
+                if((*(buff - 2) == 'O') && (*(buff - 1) == 'K')){
+                    SETACK;
+                    buff = text;
+                }else if((*(buff - 5) == 'E') && (*(buff - 4) == 'R') && (*(buff - 3) == 'R') && (*(buff - 2) == 'O') && (*(buff - 1) == 'R')){
+                    SETUER;
+                    buff = text;
+                }
+            }
         }else{
             buff = text;
         }
@@ -129,7 +136,7 @@ void main(void)
         MeasureDS();
         MeasureHY();
         __delay_ms(5000);
-        
+        ConvertMeasureToStr();
         i++;
         
     }
@@ -155,15 +162,14 @@ void main(void)
 
     AutobaudSIM();
     __delay_ms(1000);   
-    //SendCommandSIM("+CMFG=1");
-    __delay_ms(1000);
+   SendCommandSIM("E0");
+    __delay_ms(10000);
+    SendSmsSIM("+84947323580","Hello");   
     while(1){
         
-        __delay_ms(1);
-        AutobaudSIM();
-        //SendSmsSIM("+84947323580","Hello");      
+        __delay_ms(1);       
+        AutobaudSIM();   
         __delay_ms(10000);
-        
     }
 }
 #elif   MODE==COMPLETEm
@@ -171,21 +177,24 @@ void main(void)
 void main(void)
 {
     /* Initialize I/O and Peripherals for application */
-    InitApp();
-    SyncPicSIM();
+    buff = text;
     
-    char buff;
-    uint8_t test;
- 
-    ResetFifo(&bufferSIM);
-    test = ReadFifo(&bufferSIM, &buff);
+    InitApp();
+    AutobaudSIM();
+    
     while(1)
     {
         MeasureHY();
         MeasureDS();
         MeasureDHT();
-        SendSmsSim(dufkjh);
-        asm("SLEEP");
+        
+        ConvertMeasureToStr();
+        
+        SendSmsSIM("+84947323580", (char *) sms);
+        //asm("SLEEP");
+        __delay_ms(10000);
+        while(UER)
+            ;
     }
 }   
 #endif

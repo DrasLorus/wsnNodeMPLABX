@@ -293,6 +293,12 @@ void MeasureDHT(void){
 /******************************************************************************/
 /* SIM800L ********************************************************************/
 /******************************************************************************/
+void Acknowledge(){
+    while(!ACK)
+        ;
+    CLRACK;
+}
+
 void SendCommandSIM(char * command){
     SendString("AT");
     SendString(command);
@@ -300,21 +306,263 @@ void SendCommandSIM(char * command){
 }
 
 void AutobaudSIM(void){
-    SendString("AT\r\n");  
+    SendString("AT\r\n");
+    Acknowledge();
 }
 
-void SendSmsSIM(char * numero, char * message){       
-    SendCommandSIM("+CMFG=1");
-    __delay_ms(1000);
+void SendSmsSIM(char * numero, char * message){   
+    CLRACK;
+    SendCommandSIM("+CMGF=1");
+    Acknowledge();       
     SendCommandSIM("+CSMP=17,167,2,0");
-    __delay_ms(1000);
+    Acknowledge();
     SendCommandSIM("+CSCS=\"GSM\"");
-    __delay_ms(1000);
+    Acknowledge();
     SendString("AT+CMGS=\"");
     SendString(numero);
-    SendString("\"\r\n");
-    __delay_ms(1000);
+    SendString("\"\r\n");   
     SendString(message);
     SendChar(CTRL_Z);
-    //SendString("\r\n");
+    Acknowledge();
 } 
+
+void Transcodemm(double d){
+    if(d >= .9){                   
+        sms[8] = '9';
+    }else if(d >= .8){
+        sms[8] = '8'; 
+    }else if(d >= .7){
+        sms[8] = '7'; 
+    }else if(d >= .6){
+        sms[8] = '6'; 
+    }else if(d >= .5){
+        sms[8] = '5'; 
+    }else if(d >= .4){
+        sms[8] = '4'; 
+    }else if(d >= .3){
+        sms[8] = '3'; 
+    }else if(d >= .2){
+        sms[8] = '2'; 
+    }else if(d >= .1){
+        sms[8] = '1'; 
+    }else{
+        sms[8] = '0'; 
+   }
+}
+
+void Transcodecm(double * temp){
+    if(*temp >= 9.0){
+        *temp -= 9.0;
+        sms[6] = '9';
+        Transcodemm(*temp);           
+    }else if(*temp >= 8.0){
+        *temp -= 8.0;
+        sms[6] = '8';
+        Transcodemm(*temp);
+    }else if(*temp >= 7.0){
+        *temp -= 7.0;
+        sms[6] = '7';
+        Transcodemm(*temp); 
+    }else if(*temp >= 6.0){
+        *temp -= 6.0;
+        sms[6] = '6';
+        Transcodemm(*temp);
+    }else if(*temp >= 5.0){
+        *temp -= 5.0;
+        sms[6] = '5';
+        Transcodemm(*temp);               
+    }else if(*temp >= 4.0){
+        *temp -= 4.0;
+        sms[6] = '4';
+        Transcodemm(*temp);               
+    }else if(*temp >= 3.0){
+        *temp -= 3.0;
+        sms[6] = '3';
+        Transcodemm(*temp);               
+    }else if(*temp >= 2.0){
+        *temp -= 2.0;
+        sms[6] = '2';
+        Transcodemm(*temp);               
+    }else if(*temp >= 1.0){
+        *temp -= 1.0;
+        sms[6] = '1';
+        Transcodemm(*temp);               
+    }else{
+        sms[6] = '0';
+        Transcodemm(*temp);               
+    }
+}
+
+void Transcodedm(double * temp){
+    if(*temp >= 90.0){
+        *temp -= 90.0;
+        sms[5] = '9';
+        Transcodecm(temp);           
+    }else if(*temp >= 80.0){
+        *temp -= 80.0;
+        sms[5] = '8';
+        Transcodecm(temp);
+    }else if(*temp >= 70.0){
+        *temp -= 70.0;
+        sms[5] = '7';
+        Transcodecm(temp); 
+    }else if(*temp >= 60.0){
+        *temp -= 60.0;
+        sms[5] = '6';
+        Transcodecm(temp);
+    }else if(*temp >= 50.0){
+        *temp -= 50.0;
+        sms[5] = '5';
+        Transcodecm(temp);               
+    }else if(*temp >= 40.0){
+        *temp -= 40.0;
+        sms[5] = '4';
+        Transcodecm(temp);               
+    }else if(*temp >= 30.0){
+        *temp -= 30.0;
+        sms[5] = '3';
+        Transcodecm(temp);               
+    }else if(*temp >= 20.0){
+        *temp -= 20.0;
+        sms[5] = '2';
+        Transcodecm(temp);               
+    }else if(*temp >= 10.0){
+        *temp -= 10.0;
+        sms[5] = '1';
+        Transcodecm(temp);               
+    }else{
+        sms[5] = '0';
+        Transcodecm(temp);               
+    }
+}
+
+void TranscodeOthersUnit(signed char data, uint8_t i){
+    if(data >= 9){                   
+        sms[i] = '9';
+    }else if(data >= 8){
+        sms[i] = '8'; 
+    }else if(data >= 7){
+        sms[i] = '7'; 
+    }else if(data >= 6){
+        sms[i] = '6'; 
+    }else if(data >= 5){
+        sms[i] = '5'; 
+    }else if(data >= 4){
+        sms[i] = '4'; 
+    }else if(data >= 3){
+        sms[i] = '3'; 
+    }else if(data >= 2){
+        sms[i] = '2'; 
+    }else if(data >= 1){
+        sms[i] = '1'; 
+    }else{
+        sms[8] = '0'; 
+   }
+}
+
+void TranscodeOthersTenth(signed char * data, uint8_t i){
+    if(*data >= 90){
+        *data -= 90;
+        sms[i] = '9';
+        TranscodeOthersUnit(*data, i + 1);
+    }else if(*data >= 80){
+        *data -= 80;
+        sms[i] = '8';
+        TranscodeOthersUnit(*data, i + 1);
+    }else if(*data >= 70){
+        *data -= 70;
+        sms[i] = '7';
+        TranscodeOthersUnit(*data, i + 1);
+    }else if(*data >= 60){
+        *data -= 60;
+        sms[i] = '6';
+        TranscodeOthersUnit(*data, i + 1);
+    }else if(*data >= 50){
+        *data -= 50;
+        sms[i] = '5';
+        TranscodeOthersUnit(*data, i + 1);               
+    }else if(*data >= 40){
+        *data -= 40;
+        sms[i] = '4';
+        TranscodeOthersUnit(*data, i + 1);            
+    }else if(*data >= 30){
+        *data -= 30;
+        sms[i] = '3';
+        TranscodeOthersUnit(*data, i + 1);             
+    }else if(*data >= 20){
+        *data -= 20;
+        sms[i] = '2';
+        TranscodeOthersUnit(*data, i + 1);           
+    }else if(*data >= 10){
+        *data -= 10;
+        sms[i] = '1';
+        TranscodeOthersUnit(*data, i + 1);              
+    }else{
+        sms[i] = '0';
+        TranscodeOthersUnit(*data, i + 1);               
+    }
+}
+
+void ConvertMeasureToStr(){
+
+    //HYSRF05
+    double d;
+    d = distance_cm;
+    if(d >= 400.0){           // 400cm is considered as the maximum range.
+        sms[4] = '4';
+        sms[5] = '0';
+        sms[6] = '0';
+        sms[8] = '0';
+    }else if(d >= 300.0){
+        d -= 300.0;
+        sms[4] = '3';
+        Transcodedm(&d);
+    }else if(d >= 200.0){
+        d -= 200.0;
+        sms[4] = '2';
+        Transcodedm(&d);
+    }else if(d >= 100.0){
+        d -= 100.0;
+        sms[4] = '1';
+        Transcodedm(&d);
+    }else{
+        sms[4] = ' ';
+        Transcodedm(&d);
+    }
+    
+    //DS    
+    signed char tds = 0;
+    tds = ((temperatureDS[1] & 0x0F) << 4) + ((temperatureDS[0] & 0xF0) >> 4);
+    if(tds < 0){
+        tds = ~tds + 1;
+        sms[DS_H]= '-';
+        TranscodeOthersTenth(&tds, DS_T);
+    }else if(tds > 100){
+        tds -= 100;
+        sms[DS_H]= '1';
+        TranscodeOthersTenth(&tds, DS_T);
+    }else{
+        sms[DS_H]= ' ';
+        TranscodeOthersTenth(&tds, DS_T);
+    }
+    
+    //DHT11_T
+    tds = DatasDHT[2];
+    if(tds < 0){
+        tds = ~tds + 1;
+        sms[DHT_T_H]= '-';
+        TranscodeOthersTenth(&tds, DHT_T_T);
+    }else if(tds > 100){
+        tds -= 100;
+        sms[DHT_T_H]= '1';
+        TranscodeOthersTenth(&tds, DHT_T_T);
+    }else{
+        sms[DHT_T_H]= ' ';
+        TranscodeOthersTenth(&tds, DHT_T_T);
+    }
+    
+    //DHT11_RH
+    tds = DatasDHT[4];
+    TranscodeOthersTenth(&tds, DHT_RH_T);
+    //TODO
+}
