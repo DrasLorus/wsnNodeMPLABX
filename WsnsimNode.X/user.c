@@ -33,6 +33,7 @@ void InitApp(void)
     CLREROI;
     CLRERDHT;
     CLRUER;
+    CLRACK;
     
     ResetDS();
     

@@ -181,7 +181,8 @@ void main(void)
     
     InitApp();
     AutobaudSIM();
-    
+    SendCommandSIM("E0");
+    Acknowledge();
     while(1)
     {
         MeasureHY();

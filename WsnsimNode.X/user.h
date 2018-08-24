@@ -113,6 +113,7 @@ void MeasureDHT(void);                  // Launch the DHT measurement routine
 volatile uint8_t DatasDHT[5];           // The result of the DHT measure
 
 /* SIM800L ********************************************************************/
+void Acknowledge(void);
 
 void AutobaudSIM(void);
 
