@@ -1,3 +1,3 @@
 # MPLABXProjects
 
-The code and libraries for theprototype node.
+The code and libraries for the prototype node.
