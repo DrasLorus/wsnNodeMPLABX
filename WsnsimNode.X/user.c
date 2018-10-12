@@ -237,13 +237,12 @@ inline void TMR2Config40us(void){
     T2CON = 0x00;       // '00000000'
     PR2   = 200;        // 200 x (1/5)E-6 = 40E-6 
 }
-
+/*
 inline void TMR1Config18ms(void){
     T1CON = 0x30;       // '00110000'
 }
-
+*/
 inline void StartSeqDHT(){
-    TMR1Config18ms();
     TMR2Config40us();
     DriveLowDHT();
     __delay_ms(18);
